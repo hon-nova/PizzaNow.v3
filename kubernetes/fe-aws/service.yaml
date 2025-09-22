@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+   name: fe-endpoint
+spec:
+   selector:
+      app: fe-service   
+   type: NodePort
+   ports:
+   - port: 21344
+     targetPort: 4444
+     nodePort: 30080

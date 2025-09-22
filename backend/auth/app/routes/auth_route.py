@@ -1,0 +1,111 @@
+from fastapi import APIRouter
+
+auth_router = APIRouter(prefix="/api/auth", tags=["auth"])
+import logging
+logger = logging.getLogger("uvicorn.error") 
+
+from core.session import  get_db
+from core.model import User
+from sqlalchemy.orm import Session
+from fastapi import Depends, HTTPException
+from auth.app.schemas import RegisterRequest, RegisterResponse, RegisterFilter,LoginRequest, LoginResponse, LoginFilter
+from auth.app.services.custom import hash_password, verify_password, create_user,create_access_token
+
+
+@auth_router.post("/register")
+def register(payload: RegisterRequest,db: Session = Depends(get_db)) -> RegisterResponse |dict:
+   try:
+      # 1 check if user exists
+      user_db = db.query(User).filter(User.email == payload.email).first()
+      if (user_db):
+         return {
+            "detail":"Username or email already exists. Log in instead."
+         }       
+      # 2. validate user inputs     
+      create_user(**payload.model_dump()) # make it a dict
+      
+      # 3. insert user into DB
+      hashed_pwd = hash_password(payload.password)
+      new_user = User(
+         username=payload.username,
+         email = payload.email,
+         password=hashed_pwd
+         )
+      db.add(new_user)
+      db.commit()
+      db.refresh(new_user)
+            
+      base = RegisterFilter.model_validate(new_user)
+      data = base.model_dump() #a dict
+      data['message'] = "Registered successfully!"
+      response = RegisterResponse(**data)     
+      
+      print(f"@auth_route register response: {response}")
+
+      return response        
+      
+   except HTTPException:       
+      raise
+   except Exception as e:
+        # Only log unexpected errors
+      print(f"EXCEPTION /register: {str(e)}")
+      raise HTTPException(status_code=500, detail=f"Exception: {str(e)}, Internal server error")
+   
+
+from core.config import settings
+from fastapi.responses import JSONResponse
+
+@auth_router.post("/login")
+def login(payload: LoginRequest, db: Session = Depends(get_db)):
+   try:
+      # 1 check if user exists
+      user_db = db.query(User).filter(User.email == payload.email).first()
+      if (not user_db):
+         return {
+            "detail":"User Not Found!"
+         } 
+        
+      if not verify_password(payload.password,str(user_db.password)):
+         return {
+            "detail": "Password is incorrect!"
+         }
+              
+      base = LoginFilter.model_validate(user_db)
+      data = base.model_dump()
+      
+      jwt_data =  {
+         "sub":str(user_db.id),
+         "username":user_db.username
+      }
+      
+      access_token = create_access_token(jwt_data)
+      # print(f"access_token:")
+      # print(access_token)
+      
+      data['token']=access_token
+      data['message'] ="Login Success"
+      
+      from fastapi.encoders import jsonable_encoder    
+      data = jsonable_encoder(data)  
+      
+      cookie_params = {
+         "httponly": True,
+         "samesite": "lax" if settings.ENV.upper() == "DEV" else "none",
+         "secure": False if settings.ENV.upper() == "DEV" else True,
+         "max_age": 60*60*24*30  
+        }
+      
+      response = JSONResponse(content=data)
+      response.set_cookie(
+            key="k8s_token",
+            value=access_token,
+            **cookie_params
+        )
+      # print(f"@auth_route login data: {data}")
+      return response      
+      
+   except Exception as e:
+      print(f"EXCEPTION /login: {str(e)}")
+      raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+   

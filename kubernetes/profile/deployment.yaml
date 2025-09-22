@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile-deployment
+spec:
+   replicas: 1
+   selector:
+      matchLabels:
+         app: profile-service
+   template:
+      metadata:   
+         labels:
+            app: profile-service
+      spec:
+         containers:
+         -  name: profile-docker-container
+            image: hondocker23/profile-service:2025-09-17-1104
+            ports:
+            - containerPort: 2025
+            env:
+            - name: SECRET_KEY
+              value: "h8fG7yxQ4s9K2zVmB6rW1pL0eN5tYqJ3"
