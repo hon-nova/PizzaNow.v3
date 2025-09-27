@@ -16,6 +16,7 @@ export function PayPal() {
    }
 
   const [message, setMessage] = useState("")
+  const BASE_PAPAL_URL = import.meta.env.VITE_PAYPAL_BACKEND_URL
 
   return (
       <div className="grid grid-cols-12 gap-2 py-2 h-screen">
@@ -31,7 +32,7 @@ export function PayPal() {
                   }}
                   createOrder={async () => {
                      try {
-                        const response = await fetch("/api/paypal/orders", {
+                        const response = await fetch(`${BASE_PAPAL_URL}/api/paypal/orders`, {
                            method: "POST",
                            headers: {
                               "Content-Type": "application/json",
@@ -67,8 +68,7 @@ export function PayPal() {
                   }}
                   onApprove={async (data, actions) => {
                      try {
-                     const response = await fetch(
-                        `/api/paypal/orders/${data.orderID}/capture`,
+                     const response = await fetch(`${BASE_PAPAL_URL}/api/paypal/order/${data.orderID}/capture`,
                         {
                            method: "POST",
                            headers: {

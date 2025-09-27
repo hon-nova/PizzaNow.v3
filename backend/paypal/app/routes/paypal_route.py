@@ -1,23 +1,11 @@
 import logging
 import os
 
-from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi import APIRouter,HTTPException
 from fastapi.responses import JSONResponse
-from paypalserversdk.http.auth.o_auth_2 import ClientCredentialsAuthCredentials
-from paypalserversdk.logging.configuration.api_logging_configuration import (
-    LoggingConfiguration,
-    RequestLoggingConfiguration,
-    ResponseLoggingConfiguration,
-)
-from paypalserversdk.paypal_serversdk_client import PaypalServersdkClient
-from paypalserversdk.controllers.orders_controller import OrdersController
-from paypalserversdk.models.amount_with_breakdown import AmountWithBreakdown
-from paypalserversdk.models.checkout_payment_intent import CheckoutPaymentIntent
-from paypalserversdk.models.order_request import OrderRequest
-from paypalserversdk.models.purchase_unit_request import PurchaseUnitRequest
-from paypalserversdk.api_helper import ApiHelper
-from app.core import settings
-from app.schemas import OrderRequest
+
+from core import settings
+from paypal.app.schemas import OrderRequest
 
 paypal_router = APIRouter(prefix="/api/paypal", tags=["paypal"])
 
@@ -70,10 +58,11 @@ def create_order(data: OrderRequest):
       headers={"Authorization": f"Bearer {token}"},
    )
    if resp.status_code >= 300:
-        raise HTTPException(resp.status_code, resp.text)
+      raise HTTPException(resp.status_code, resp.text)
    return resp.json()
 
 PAYPAL_BASE="https://api-m.sandbox.paypal.com"
+
 @paypal_router.post("/orders/{order_id}/capture")
 def capture_order(order_id:str):
    token = get_access_token()
