@@ -4,7 +4,12 @@ from sqlalchemy import create_engine, text, inspect
 
 Base = declarative_base()
 
-engine= create_engine(settings.DATABASE_URL,echo=True)
+engine= create_engine(
+      settings.DATABASE_URL,
+      connect_args={"sslmode": "require"},
+      echo=True
+   )
+
 # inspector = inspect(engine)
 # print(f"@core/session")
 # print(inspector.get_table_names())

@@ -45,7 +45,7 @@ export function Nav(){
                  <div className="cursor-pointer hover:bg-neutral-200 hover:text-black hover:rounded p-2"><Link to="/user/cart">Cart ({cart_length})</Link></div>
                 {user?.username ? 
                <div className="cursor-pointer hover:bg-neutral-200 hover:text-black hover:rounded p-2"><button onClick={onLogout}>Logout</button></div> :  
-               <div className="cursor-pointer hover:bg-neutral-200 hover:text-black hover:rounded p-2"><Link to="/api/auth/login">Login</Link></div>}              
+               <div className="cursor-pointer hover:bg-neutral-200 hover:text-black hover:rounded p-2"><Link to="/">Login</Link></div>}              
             </div>           
          </div>        
       </ul>

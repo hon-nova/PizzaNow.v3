@@ -1,16 +1,17 @@
 from pydantic_settings import BaseSettings
 import os
+from pathlib import Path
 
 ENV = os.getenv("ENV", "DEV").upper() 
 env_file = ".env" if ENV == "DEV" else ".env.prod"
 
 class Settings(BaseSettings):  
    
-   ENV: str = "test"
+   ENV: str = ENV
    VERTEX_REGION: str = "us-central1"  
    PROJECT_ID: str = "dummy-project"
    ALLOWED_ORIGINS: str = "*"
-   DATABASE_URL: str = "sqlite:///:memory:"
+   DATABASE_URL: str = ""
    SECRET_KEY: str = "secret"
    ALGORITHM: str = ""
    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
@@ -38,8 +39,8 @@ class Settings(BaseSettings):
    PAYPAL_CHECKOUT_ORDERS_URL: str=""  
    
    
-   class Config:
-      env_file = env_file
-      extra = "forbid"  
+   class Config:          
+      env_file = Path(__file__).parent / ".env"      
+      extra = "forbid" 
 
 settings = Settings() # pyright: ignore[reportCallIssue]

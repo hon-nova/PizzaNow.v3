@@ -34,20 +34,6 @@ app.include_router(auth_router)
 
 # logging.info(f"DATABASE_URL CURRENTLY: {settings.DATABASE_URL}")
 # logger.info("@main Routers: %s", app.routes)
-from core.session import SessionLocal
-from core.model import User
-
-db = SessionLocal()
-try:
-    user = db.query(User).first()
-    logger.warning(f"first user @main")
-    print(user)
-except Exception as e:
-    import traceback
-    print(traceback.format_exc())
-finally:
-    db.close()
-
 
 # if settings.ENV.upper()=="DEV":
 #    Base.metadata.create_all(bind=engine)
@@ -57,7 +43,7 @@ def ping():
    return {"message": "pong"}
    
 if __name__ == "__main__":
-   port = int(os.environ.get("PORT", 8000))
+   port = int(os.environ.get("PORT", 8081))
    import uvicorn
    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
 

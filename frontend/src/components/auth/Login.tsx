@@ -46,7 +46,7 @@ export function Login() {
          
          setMsg((pre:Msg)=>({...pre, success:result?.message}))         
          setTimeout(()=>{
-            navigate('/query')
+            navigate('/products')
          },2000)  
       }
       loginUser()
@@ -111,14 +111,14 @@ export function Login() {
           <div className="flex flex-col justify-center items-center mt-3">            
             <button
                onClick={() => {
-                  window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google/login`;
+                  window.location.href = `${import.meta.env.VITE_AUTH_BACKEND_URL}/api/auth/google/login`;
                }}
                className="flex flex-row space-x-2 bg-black text-white py-1 px-4 rounded-full border rounded cursor-pointer"
                > <FcGoogle size={30}/> <span>Sign in with Google</span>
             </button>
             <button
                onClick={() => {
-                  window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/linkedin/login`
+                  window.location.href = `${import.meta.env.VITE_AUTH_BACKEND_URL}/api/auth/linkedin/login`
                }}
                className="flex flex-row space-x-2 bg-blue-700 text-white py-1 px-4 rounded-full border rounded cursor-pointer"
                > <LiaLinkedin size={30}/> <span>Sign in with LinkedIn</span>

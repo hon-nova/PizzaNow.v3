@@ -16,7 +16,7 @@ export default function App() {
             <Route path="/" element={<Login />} />
             <Route path="/register" element={<Register />} />
             {/* <Route path="/query" element={<Query />} /> */}
-            <Route path="/query" element={<Home />} />
+            <Route path="/products" element={<Home />} />
             <Route path="/api/privacy-policy" element={<Policy />} />           
             <Route path="/user/cart" element={<Cart />} />           
             <Route path="/pay" element={<PayPal />} />           

@@ -12,7 +12,7 @@ export function Home(){
    const { user, setUser  } = useUserStore()
    console.log(`logged-in user: `, user )
   
-   const BASE_URL = import.meta.env.VITE_BACKEND_URL
+   const BASE_URL = import.meta.env.VITE_PROFILE_BACKEND_URL
    
    console.log(`Initial BASE_URL: ${BASE_URL}`)   
    useEffect(()=>{

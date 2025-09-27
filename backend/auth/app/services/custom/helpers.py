@@ -1,11 +1,7 @@
+from fastapi import HTTPException
+from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
 from core.config import settings
-from jose import jwt, JWTError
-from fastapi import Depends, HTTPException, status, Request
-
-from sqlalchemy.orm import Session
-from core.session import get_db
-from core.model import User
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
@@ -30,43 +26,6 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
    print(f"IMPORTANT encoded_jwt: {encoded_jwt}")
    return encoded_jwt
-
-# data = {
-#    "sub":"useriduseriduserid",
-#    "username":"username"
-# }
-
-# create_access_token(data)
-def decode_token(token: str):
-   try:
-      payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-      sub: str | None = payload.get("sub")
-      username: str | None = payload.get("username")
-
-      if not isinstance(sub,str):
-         raise HTTPException(status_code=401, detail="Invalid token: no subject")
-
-      return {"sub": sub, "username": username}
-
-   except JWTError:
-      raise HTTPException(status_code=401, detail="Invalid or expired token")   
-   
-
-
-def get_current_user(request: Request,db: Session = Depends(get_db)):
-   token = request.cookies.get("access_token")
-   if not token:
-      raise HTTPException(status_code=401, detail="Not authenticated")
-
-   user_data = decode_token(token)
-   user = db.query(User).filter(
-         (User.username == user_data['username']) | (User.id == user_data['sub'])
-      ).first()
-   if not user:
-      raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
-   
-   return user  
-
 import re
 email_regex = r"^[\w\.-]+@[\w\.-]+\.\w+$"
 def validate_new_user(func):
@@ -93,17 +52,57 @@ def validate_new_user(func):
 def create_user(username,email, password, confirm_password):
    print(f"new user created with \nUsername: {username}\nEmail: {email}\nPassword length: {len(password)}")
    
-# def validate_login(func):
-#    def wrapper(email,password,*args,**kwargs):
-#       if not re.match(email_regex,email):
-#          raise ValueError("")
-
+   
 from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["bcrypt"],deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def hash_password(pwd:str)->str:
-   return pwd_context.hash(pwd)
+def hash_password(pwd: str) -> str:
+    """
+    Hash a password safely with bcrypt.
+    - Ensures it's a string
+    - Strips whitespace
+    - Truncates to 72 bytes (bcrypt limit)
+    """
+    if not isinstance(pwd, str):
+        raise ValueError(f"Password must be a string, got {type(pwd)}")
 
-def verify_password(plain_pwd:str, hashed_pwd:str)->bool:
-   return pwd_context.verify(plain_pwd,hashed_pwd)
+    # normalize & truncate
+    pwd = pwd.strip()
+    pwd_bytes = pwd.encode("utf-8")
+    if len(pwd_bytes) > 72:
+        pwd_bytes = pwd_bytes[:72]
+        pwd = pwd_bytes.decode("utf-8", errors="ignore")
+
+    return pwd_context.hash(pwd)
+
+
+def verify_password(plain_pwd: str, hashed_pwd: str) -> bool:
+    """
+    Verify a password safely.
+    - Returns False if inputs are invalid
+    - Handles bcrypt's 72-byte limit
+    """
+    if not plain_pwd or not hashed_pwd:
+        return False
+    if not isinstance(plain_pwd, str) or not isinstance(hashed_pwd, str):
+        return False
+
+    plain_pwd = plain_pwd.strip()
+    plain_bytes = plain_pwd.encode("utf-8")
+    if len(plain_bytes) > 72:
+        plain_bytes = plain_bytes[:72]
+        plain_pwd = plain_bytes.decode("utf-8", errors="ignore")
+
+    try:
+        return pwd_context.verify(plain_pwd, hashed_pwd)
+    except Exception:
+        return False
+
+
+# quick test
+if __name__ == "__main__":
+    hashed = hash_password("useruser")
+    print(f"mypassword: {hashed}")
+    print("verify correct:", verify_password("useruser", hashed))
+    print("verify wrong:", verify_password("wrongpass", hashed))

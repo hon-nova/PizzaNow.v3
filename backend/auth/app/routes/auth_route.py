@@ -1,23 +1,25 @@
-from fastapi import APIRouter
+from fastapi import APIRouter,Depends, HTTPException
+from fastapi.responses import JSONResponse
+from sqlalchemy.orm import Session
+
+from core.model import  User
+from core.session import get_db
+from core.config import settings
+from core.auth import create_access_token
+
+from auth.app.schemas import RegisterRequest, RegisterResponse, RegisterFilter,LoginRequest, LoginResponse, LoginFilter
+from auth.app.services.custom import hash_password, verify_password, create_user
 
 auth_router = APIRouter(prefix="/api/auth", tags=["auth"])
 import logging
 logger = logging.getLogger("uvicorn.error") 
-
-from core.session import  get_db
-from core.model import User
-from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException
-from auth.app.schemas import RegisterRequest, RegisterResponse, RegisterFilter,LoginRequest, LoginResponse, LoginFilter
-from auth.app.services.custom import hash_password, verify_password, create_user,create_access_token
-
 
 @auth_router.post("/register")
 def register(payload: RegisterRequest,db: Session = Depends(get_db)) -> RegisterResponse |dict:
    try:
       # 1 check if user exists
       user_db = db.query(User).filter(User.email == payload.email).first()
-      if (user_db):
+      if user_db:
          return {
             "detail":"Username or email already exists. Log in instead."
          }       
@@ -51,21 +53,19 @@ def register(payload: RegisterRequest,db: Session = Depends(get_db)) -> Register
       print(f"EXCEPTION /register: {str(e)}")
       raise HTTPException(status_code=500, detail=f"Exception: {str(e)}, Internal server error")
    
-
-from core.config import settings
-from fastapi.responses import JSONResponse
-
 @auth_router.post("/login")
 def login(payload: LoginRequest, db: Session = Depends(get_db)):
    try:
       # 1 check if user exists
       user_db = db.query(User).filter(User.email == payload.email).first()
-      if (not user_db):
+      logging.error(f"user_db: {user_db}")
+      if not user_db:
          return {
             "detail":"User Not Found!"
          } 
+      logging.error(f"Trying to verify password. plain_pwd={repr(payload.password)}, hashed_pwd={repr(user_db.password)}")
         
-      if not verify_password(payload.password,str(user_db.password)):
+      if not verify_password(payload.password,user_db.password):
          return {
             "detail": "Password is incorrect!"
          }
