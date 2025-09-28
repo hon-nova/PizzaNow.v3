@@ -1,7 +1,4 @@
-from core.session import get_db
-from core.model import User
-from core.config import settings
-
+from core import settings, User, get_db
 from fastapi import Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
@@ -20,8 +17,9 @@ def decode_token(token: str):
    except JWTError:
       raise HTTPException(status_code=401, detail="Invalid or expired token") 
    
+   
 def get_current_user(request: Request,db: Session = Depends(get_db)):
-   token = request.cookies.get("access_token")
+   token = request.cookies.get("k8s_token")
    if not token:
       raise HTTPException(status_code=401, detail="Not authenticated")
 

@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
 from core.session import Base, engine 
-from auth.app.routes import auth_router,auth_google_router
+from profile.app.routes import profile_router
 
 
 import logging
@@ -24,13 +24,7 @@ app.add_middleware(
 ) 
     
 # app.include_router(test_router, prefix="/test") 
-app.include_router(auth_router) 
-# app.include_router(auth_google_router) 
-# app.include_router(auth_linkedin_router) 
-# app.include_router(pizza_router) 
-# app.include_router(paypal_router)
-# app.include_router(graph_router)  
-  
+app.include_router(profile_router) 
 
 # logging.info(f"DATABASE_URL CURRENTLY: {settings.DATABASE_URL}")
 # logger.info("@main Routers: %s", app.routes)

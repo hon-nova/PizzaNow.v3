@@ -3,9 +3,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
-from core.session import Base, engine 
+# from core.session import Base, engine 
 from auth.app.routes import auth_router,auth_google_router
-
+# from core.session import SessionLocal
+from core.model import User
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -27,26 +28,9 @@ app.add_middleware(
 app.include_router(auth_router) 
 # app.include_router(auth_google_router) 
 # app.include_router(auth_linkedin_router) 
-# app.include_router(pizza_router) 
-# app.include_router(paypal_router)
-# app.include_router(graph_router)  
-  
 
 # logging.info(f"DATABASE_URL CURRENTLY: {settings.DATABASE_URL}")
 # logger.info("@main Routers: %s", app.routes)
-from core.session import SessionLocal
-from core.model import User
-
-db = SessionLocal()
-try:
-    user = db.query(User).first()
-    logger.warning(f"first user @main")
-    print(user)
-except Exception as e:
-    import traceback
-    print(traceback.format_exc())
-finally:
-    db.close()
 
 
 # if settings.ENV.upper()=="DEV":

@@ -5,10 +5,11 @@ from sqlalchemy.orm import Session
 from core.model import  User
 from core.session import get_db
 from core.config import settings
-from core.auth import create_access_token
+
 
 from auth.app.schemas import RegisterRequest, RegisterResponse, RegisterFilter,LoginRequest, LoginResponse, LoginFilter
-from auth.app.services.custom import hash_password, verify_password, create_user
+from auth.app.services.custom import hash_password, verify_password, create_user, create_access_token
+
 
 auth_router = APIRouter(prefix="/api/auth", tags=["auth"])
 import logging
