@@ -123,12 +123,12 @@ def capture_order(order_id:str):
 from paypal.app.schemas import OrderCreateRequest
 from paypal.app.services import save_to_neon
 
-@paypal_router.post("/order/create")
+@paypal_router.post("/orders/create")
 def create_order_in_db(order: OrderCreateRequest):
-    # save the order to Neon DB
-    # return OrderId + summary
-    saved_order_id = save_to_neon(order)  # your DB function
-    return {"order_id": saved_order_id, "status": "CREATED"}
+   # save the order to Neon DB
+   # return OrderId + summary
+   saved_order_id = save_to_neon(order)  # your DB function
+   return {"order_id": saved_order_id, "status": "CREATED"}
 
 
 
