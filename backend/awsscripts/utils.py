@@ -216,7 +216,7 @@ from awsscripts import predict_ingredients
 def seed_pizzas():
    session = SessionLocal()
    try:
-      image_urls = get_all_s3_image_urls()  # now returns presigned URLs
+      image_urls = get_all_s3_image_urls() 
 
       for url, name in zip(image_urls, image_names):
          full_price, slice_price = generate_price_tiers()
@@ -248,4 +248,4 @@ def seed_pizzas():
    finally:
       session.close()
 
-seed_pizzas()
+# seed_pizzas()

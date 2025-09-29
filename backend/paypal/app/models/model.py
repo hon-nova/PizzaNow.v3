@@ -1,4 +1,6 @@
+import datetime
 import uuid
+
 from sqlalchemy import (  
    Integer,
    Column,   
@@ -19,6 +21,7 @@ class Order(Base):
    shipping_fee = Column(Numeric(10, 2), default=0)
    taxes = Column(Numeric(10, 2), default=0)
    total = Column(Numeric(10, 2), nullable=False)
+   transaction_date = Column(DateTime,default=datetime.now())
 
    # relationship to order items
    items = relationship("OrderItem", back_populates="order")
