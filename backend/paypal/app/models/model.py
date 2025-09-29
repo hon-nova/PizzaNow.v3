@@ -1,0 +1,36 @@
+import uuid
+from sqlalchemy import (  
+   Integer,
+   Column,   
+   Numeric,
+   ForeignKey,
+  )
+from sqlalchemy.dialects.postgresql import UUID
+from core import Base
+from sqlalchemy.orm import relationship
+
+class Order(Base):
+   __tablename__="orders"
+   
+   id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+   user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+
+   discount = Column(Numeric(10, 2), default=0)
+   shipping_fee = Column(Numeric(10, 2), default=0)
+   taxes = Column(Numeric(10, 2), default=0)
+   total = Column(Numeric(10, 2), nullable=False)
+
+   # relationship to order items
+   items = relationship("OrderItem", back_populates="order")
+   
+class OrderItem(Base):
+   __tablename__ = "order_items"
+
+   id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+   order_id = Column(UUID(as_uuid=True), ForeignKey("orders.id"), nullable=False)
+   
+   pizza_id = Column(UUID(as_uuid=True), ForeignKey("pizzas.id"), nullable=False)
+   quantity = Column(Integer, nullable=False)
+   sub_amount = Column(Numeric(10, 2), nullable=False)
+
+   order = relationship("Order", back_populates="items")

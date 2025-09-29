@@ -41,6 +41,7 @@ class Settings(BaseSettings):
    
    PAYPAL_CLIENT_ID: str=""
    PAYPAL_CLIENT_SECRET: str=""
+   PAYPAL_DOMAINS: str=""
    PAYPAL_OAUTH2_TOKEN_URL: str=""
    PAYPAL_CHECKOUT_ORDERS_URL: str=""  
    

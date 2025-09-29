@@ -23,13 +23,7 @@ app.add_middleware(
 ) 
     
 # app.include_router(test_router, prefix="/test") 
-app.include_router(paypal_router) 
-# app.include_router(auth_google_router) 
-# app.include_router(auth_linkedin_router) 
-# app.include_router(pizza_router) 
-# app.include_router(paypal_router)
-# app.include_router(graph_router)  
-  
+app.include_router(paypal_router)   
 
 # logging.info(f"DATABASE_URL CURRENTLY: {settings.DATABASE_URL}")
 # logger.info("@main Routers: %s", app.routes)
@@ -42,7 +36,7 @@ def ping():
    return {"pong": True}
    
 if __name__ == "__main__":
-   port = int(os.environ.get("PORT", 8081))
+   port = int(os.environ.get("PORT", 8084))
    import uvicorn
    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
 

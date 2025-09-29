@@ -1,0 +1,1 @@
+from .train_ingredients import predict_ingredients

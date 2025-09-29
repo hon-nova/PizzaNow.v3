@@ -19,12 +19,14 @@ export type Pizza  = {
    image_url: string
    ingredients: string[]
 }
+
 export type Item = {
    pizza: Pizza
    quantity:number
    unit_type:string
    subAmount: number
 }
+
 export type Cart = {
    userId: string
    cartItems: Item[]

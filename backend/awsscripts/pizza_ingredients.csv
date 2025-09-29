@@ -1,0 +1,123 @@
+filename,ingredients
+000001.jpg,|cheese|sausage|chili flakes|processed meat
+000002.jpg,|cheese|sausage|processed meat|bacon
+000004.jpg,|cheese|parmesan cheese|sausage
+000005.jpg,|cheese|sausage|ham|processed meat|Mozzarella|processed meat
+000006.jpg,|cheese|sausage|processed meat|Mozzarella
+000007.jpg,|cheese|sausage|processed meat|Mozzarella|bell peppers
+000008.jpg,|cheese|sausage|processed meat|Mozzarella
+000009.jpg,|cheese|tomato|sausage|processed meat|Mozzarella
+000011.jpg,|cheese|tomato|processed meat|sausage|chili flakes|bacon
+000012.jpg,|cheese|tomato|processed meat|Mozzarella|bacon
+000013.jpg,|cheese|tomato|processed meat|ham|parmesan cheese
+000014.jpg,|cheese|tomato|sausage|chili flakes|Mozzarella|processed meat|ham
+000015.jpg,|cheese|tomato|sausage|processed|bell peppers|Mozzarella
+000017.jpg,|cheese|tomato|processed meat|Mozzarella
+000018.jpg,|cheese|sausage|processed|tomato
+000019.jpg,|cheese|tomato|sausage|processed meat|Mozzarella
+000020.jpg,|cheese|tomato|sausage|green|Mozzarella|processed meat
+000023.jpg,|cheese|sausage|chili flakes|Mozzarella|processed meat
+000024.jpg,|cheese|tomato|processed meat|sausage|green|Mozzarella
+000025.jpg,|cheese|tomato|processed meat|sausage|Mozzarella|green|mushrooms
+000026.jpg,|cheese|tomato|sausage|ham|processed meat|chili flakes|Mozzarella
+000027.jpg,|cheese|tomato|processed meat|sausage|ham|parmesan cheese
+000028.jpg,|cheese|tomato|processed meat|sausage|chili flakes
+000029.jpg,|cheese|tomato|sausage|processed meat|chili flakes|Mozzarella
+000030.jpg,|cheese|tomato|sausage|ham|chili flakes|Mozzarella|processed meat
+000031.jpg,|cheese|tomato|sausage|processed meat|parmesan cheese|green
+000032.jpg,|cheese|tomato|banana peppers|onion|processed meat|Mozzarella
+000034.jpg,|cheese|tomato|ham|processed meat|Mozzarella
+000035.jpg,|cheese|tomato|sausage|processed meat|Mozzarella
+000036.jpg,|cheese|tomato|processed meat|Mozzarella|onion
+000038.jpg,|cheese|tomato|sausage|processed meat|Mozzarella
+000039.jpg,|cheese|tomato|processed meat|sausage|Mozzarella
+000040.jpg,|cheese|tomato|sausage|processed meat|Mozzarella|chili flakes
+000041.jpg,|cheese|processed meat|ham|Mozzarella|sausage
+000042.jpg,|cheese|tomato|processed meat|ham|Mozzarella
+000043.jpg,|cheese|tomato|sausage|green|Mozzarella|processed meat|olive
+000046.jpg,|cheese|tomato|sausage|Mozzarella|chili flakes|processed meat
+000048.jpg,|cheese|tomato|sausage|Mozzarella|processed meat
+000049.jpg,|cheese|tomato|sausage|processed meat|green
+000050.jpg,|cheese|sausage|Mozzarella|processed meat
+000101.jpg,|cheese|tomato|olive|onion|green
+000102.jpg,|cheese|tomato|banana peppers|Mozzarella|processed meat
+000103.jpg,|cheese|tomato|green|mushrooms|Mozzarella
+000104.jpg,|cheese|tomato|Mozzarella|green|chili flakes|processed meat
+000105.jpg,|cheese|processed meat|bell peppers|mushrooms|Mozzarella
+000106.jpg,|cheese|tomato|green|banana peppers|mushrooms|processed meat
+000109.jpg,|cheese|tomato|bell peppers|olive|sausage|corn
+000110.jpg,|cheese|tomato|green|bell peppers|Mozzarella|mushrooms
+000143.jpg,|cheese|tomato|green|mushrooms|bell peppers|Mozzarella|processed meat
+000191.jpg,|cheese|tomato|green|bell peppers|mushrooms|Mozzarella
+000203.jpg,|cheese|tomato|olive|green|Mozzarella|mushrooms
+000228.jpg,|cheese|tomato|bell peppers|olive|Mozzarella
+000285.jpg,|cheese|tomato|onion|mushrooms|Mozzarella|parmesan cheese|green|bell peppers
+000287.jpg,|cheese|mushrooms|green|bell peppers|Mozzarella|tomato
+000302.jpg,|cheese|tomato|bell peppers|Mozzarella|onion|chili flakes
+000303.jpg,|cheese|Mozzarella|banana peppers|green|chili flakes
+000304.jpg,|cheese|tomato|mushrooms|green|banana peppers
+000305.jpg,|cheese|Mozzarella|green|bell peppers
+000306.jpg,|cheese|tomato|olive|banana peppers|green|Mozzarella|mushrooms
+000308.jpg,|cheese|green|Mozzarella|bell peppers
+000309.jpg,|cheese|bell peppers|green|Mozzarella
+000310.jpg,|cheese|tomato|green|olive
+000311.jpg,|cheese|tomato|mushrooms|Mozzarella|parmesan cheese|green|onion
+000312.jpg,|cheese|green|onion|chili flakes|tomato|olive
+000313.jpg,|cheese|green|Mozzarella|bell peppers
+000314.jpg,|cheese|tomato|Mozzarella|chili flakes|olive|green
+000315.jpg,|cheese|tomato|avocado|green|onion|processed meat|onion|bell peppers
+000316.jpg,|cheese|tomato|green|parmesan cheese|onion
+000319.jpg,|cheese|tomato|green|parmesan cheese|Mozzarella|chili flakes
+000320.jpg,|cheese|tomato|bell peppers|parmesan cheese|green|onion
+000321.jpg,|cheese|tomato|bell peppers|Mozzarella|green|chili flakes|mushrooms
+000322.jpg,|cheese|tomato|onion|olive|Mozzarella|bell peppers
+000323.jpg,|cheese|green|tomato|parmesan cheese|Mozzarella|onion
+000324.jpg,|cheese|tomato|olive|onion|Mozzarella|bell peppers|green
+000325.jpg,|cheese|Mozzarella|green|tomato
+000326.jpg,|cheese|tomato|Mozzarella|chili flakes|banana peppers|processed meat
+000328.jpg,|cheese|green|banana peppers
+000329.jpg,|cheese|tomato|mushrooms|onion|banana peppers|parmesan|chili flakes|parmesan cheese
+000330.jpg,|cheese|green|processed meat|chili flakes|onion|banana peppers|tomato
+000331.jpg,|cheese|Mozzarella|green|bell peppers
+000332.jpg,|cheese|tomato|green|Mozzarella|bell peppers|mushrooms
+000335.jpg,|cheese|green|olive|bell peppers|mushrooms
+000337.jpg,|cheese|tomato|onion|parmesan cheese|bell peppers|Mozzarella|mushrooms|chili flakes
+000339.jpg,|cheese|bell peppers|onion|green|parmesan cheese
+000340.jpg,|cheese|tomato|green|mushrooms|banana peppers|Mozzarella
+000341.jpg,|cheese|Mozzarella|tomato|olive|mushrooms|green
+000343.jpg,|cheese|Mozzarella|mushrooms|green|bell peppers|onion
+000346.jpg,|cheese|tomato|olive|bell peppers|Mozzarella|green
+000347.jpg,|cheese|green|bell peppers
+000348.jpg,|cheese|Mozzarella|green|onion|banana peppers|processed meat
+000351.jpg,|cheese|tomato|green|onion|chili flakes|processed meat|banana peppers
+000352.jpg,|cheese|tomato|green|Mozzarella|chili flakes|banana peppers
+000357.jpg,|cheese|green|tomato|Mozzarella|onion
+000360.jpg,|cheese|Mozzarella|green|tomato
+000363.jpg,|cheese|tomato|bell peppers|olive|onion|Mozzarella|green
+000364.jpg,|cheese|Mozzarella|green|tomato|olive
+000365.jpg,|cheese|tomato|processed meat|green|banana peppers|onion|Mozzarella
+000366.jpg,|cheese|tomato|olive|green|banana peppers|bell peppers|mushrooms
+000367.jpg,|cheese|tomato|bell peppers|olive|Mozzarella|onion
+000369.jpg,|cheese|tomato|Mozzarella|banana peppers|mushrooms
+000370.jpg,|cheese|tomato|bell peppers|onion|green|Mozzarella
+000371.jpg,|cheese|Mozzarella|tomato|banana peppers|green|chili flakes
+000375.jpg,|cheese|tomato|green|banana peppers|mushrooms|Mozzarella
+000376.jpg,|cheese|tomato|bell peppers|olive|Mozzarella|mushrooms
+000377.jpg,|cheese|tomato|green|mushrooms|Mozzarella|banana peppers
+000381.jpg,|cheese|olive|tomato|Mozzarella|bell peppers|green
+000391.jpg,|cheese|tomato|onion|olive|bell peppers|Mozzarella|green
+000403.jpg,|cheese|Mozzarella|mushrooms|green
+000417.jpg,|cheese|tomato|bell peppers|olive|chili flakes|Mozzarella|processed meat
+000428.jpg,|cheese|tomato|olive|Mozzarella|bell peppers|mushrooms
+meat_5.jpg,|cheese|tomato|olive|Mozzarella|sausage|processed meat
+spicy_1.jpg,|cheese|tomato|green|Mozzarella
+vegetarian+pizza_3.jpg,|cheese|Mozzarella|tomato|green|olive
+vegetarian+pizza_456.jpg,|cheese|tomato|bell peppers|green|olive|banana peppers|Mozzarella|chili flakes
+vegetarian+pizza_465.jpg,|cheese|tomato|green|parmesan cheese
+vegetarian+pizza_77.jpg,|cheese|tomato|olive|bell peppers|Mozzarella|mushrooms
+vegetarian+pizza_83.jpg,|cheese|Mozzarella|mushrooms|green|chili flakes
+vegetarian+pizza_93.jpg,|cheese|Mozzarella|olive|green
+veggie_140.jpg,|cheese|tomato|mushrooms|Mozzarella|green
+veggie_141.jpg,|cheese|tomato|Mozzarella|mushrooms|olive|green
+veggie_142.jpg,|cheese|tomato|mushrooms|olive|Mozzarella|bell peppers|processed
+veggie_444.jpg,|cheese|tomato|green|parmesan cheese|bacon

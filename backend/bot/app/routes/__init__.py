@@ -1,1 +1,1 @@
-from .pizza_route import pizza_router
+from .bot_route import bot_router

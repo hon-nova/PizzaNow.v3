@@ -13,7 +13,7 @@ export function Nav(){
    const { user,logout } = useUserStore();
    const userId = user?.id;
    const { cart, setUserId, setCart } = useCartStore();
-
+   console.log(cart)
    useEffect(() => {
       if (!userId) return
       setUserId(userId)      
@@ -40,7 +40,7 @@ export function Nav(){
                </Link> */}
             </div>
             <div className="flex flex-row justify-center items-center">
-                {/* <div className="cursor-pointer hover:bg-neutral-200 hover:text-black hover:rounded p-2"><Link to="/api/pizzas"> Pizza Store</Link></div> */}
+                {/* <div className="cursor-pointer hover:bg-neutral-200 hover:text-black hover:rounded p-2"><Link to="/products"> Back Home</Link></div> */}
                 {/* <div className="cursor-pointer hover:bg-neutral-200 hover:text-black hover:rounded p-2"><Link to="/api/benbot/chat"> <GiMegabot size={33}/></Link></div> */}
                  <div className="cursor-pointer hover:bg-neutral-200 hover:text-black hover:rounded p-2"><Link to="/user/cart">Cart ({cart_length})</Link></div>
                 {user?.username ? 

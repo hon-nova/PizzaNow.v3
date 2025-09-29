@@ -1,5 +1,5 @@
 import { Footer } from "./Footer"
-import { Nav } from "./Nav"
+import { Nav } from "../home/Nav"
 import { useUserStore } from "../stores/userStore"
 import { useEffect } from "react"
 
@@ -12,12 +12,12 @@ export function Home(){
    const { user, setUser  } = useUserStore()
    console.log(`logged-in user: `, user )
   
-   const BASE_URL = import.meta.env.VITE_PROFILE_BACKEND_URL
+   const BASE_URL = import.meta.env.VITE_BOT_BACKEND_URL
    
    console.log(`Initial BASE_URL: ${BASE_URL}`)   
    useEffect(()=>{
       async function getUser(){
-         const res = await fetch(`${BASE_URL}/api/auth/me`,{
+         const res = await fetch(`${BASE_URL}/api/pizzas/auth`,{
             method:"GET",
             headers:{
                   "Content-Type":"application/json",               

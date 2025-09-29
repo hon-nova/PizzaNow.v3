@@ -10,9 +10,7 @@ from sqlalchemy import (
    ARRAY,
 )
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
 from core import Base
-
 class User(Base):
    __tablename__="users"
    
@@ -25,3 +23,16 @@ class User(Base):
    avatar = Column(String)
    provider=Column(String, default="custom")
    provider_id= Column(String)
+
+class Pizza(Base):
+   __tablename__ = 'pizzas'
+
+   id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+   name = Column(String, nullable=False)
+   description = Column(Text)
+   full_price = Column(Numeric, nullable=False)
+   slice_price = Column(Numeric, nullable=False)
+   image_url = Column(String, nullable=False)
+   ingredients = Column(ARRAY(String),nullable=False)
+   pizza_type =  Column(String, nullable=False)
+ 

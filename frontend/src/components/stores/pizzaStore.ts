@@ -13,7 +13,7 @@ type PizzaState = {
   fetchPizzas: (page: number,limit:number) => Promise<void>  
   setPage: (page: number) => void;
 }
-const BASE_URL= import.meta.env.VITE_BACKEND_URL
+const BASE_URL= import.meta.env.VITE_BOT_BACKEND_URL
 export const usePizzaStore = create<PizzaState>(  
     (set,get) => ({
       pizzas: [],
