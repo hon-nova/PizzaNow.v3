@@ -1,3 +1,4 @@
 docs/
 ingredients/
-backend/awsscripts/
+backend/awsscripts/models
+backend/awsscripts/pizza_images_local
