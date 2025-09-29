@@ -10,6 +10,7 @@ from sqlalchemy import pool
 from alembic import context
 from core.session import Base, settings
 from core.model import User
+from paypal.app.models.model import Order, OrderItem
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -12,9 +12,9 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID
 from core import Base
 class User(Base):
-   __tablename__="users"
+   __tablename__="users"   
    
-   id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+   id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
    username=Column(String, unique=True)
    email=Column(String,unique=True)
    password=Column(String)

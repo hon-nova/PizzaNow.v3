@@ -30,9 +30,9 @@ const emptyCart = (userId: string): Cart => ({
 
 const calculateTotals = (items: Item[], shippingFee: number, discount: number) => {
    const subTotal = items.reduce((acc, { subAmount }) => Number(acc + subAmount), 0)
-   const taxes = Number((subTotal * 0.05))
-   const total = Number((subTotal + taxes + shippingFee - discount))
-   const totalItem = items.reduce((acc, { quantity }) => Number(acc + quantity), 0)
+   const taxes = Number((subTotal * 0.05).toFixed(2))
+   const total = Number((subTotal + taxes + shippingFee - discount).toFixed(2))
+   const totalItem = (items.reduce((acc, { quantity }) => Number(acc + quantity), 0))
    return { subTotal, taxes, total, totalItem }
 }
 

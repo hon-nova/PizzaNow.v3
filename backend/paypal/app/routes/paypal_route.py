@@ -1,9 +1,8 @@
 import logging
 import os
 
-from backend.core.session import SessionLocal
 from fastapi import APIRouter,HTTPException
-from fastapi.responses import JSONResponse
+# from fastapi.responses import JSONResponse
 
 from core import settings
 from paypal.app.schemas import OrderRequest
@@ -32,43 +31,58 @@ def get_access_token():
          headers={"Accept": "application/json"}
       )
       resp.raise_for_status()
+      # logging.info(f"resp.json() from PayPal: {resp.json()["access_token"]}")
+      return resp.json()['access_token']
    except requests.RequestException as e:
       raise HTTPException(status_code=500, detail=str(e))
-   #  "access_token": "A21AAIgqp5Bl4sx-HGYUS5CyIKotIEoN8pPjDQwVdmqurvTl2eBDDz41ryyfWmbbicdPdFj31DhUmfXpf50ZxYSzXlD0yNRoA"
-   logging.info(f"resp.json() from PayPal: {resp.json()}")
-   return resp.json()
+   #  "access_token": "A21AAIgqp5Bl4sx-HGYUS5CyIKotIEoN8pPjDQwVdmqurvTl2eBDDz41ryyfWmbbicdPdFj31DhUmfXpf50ZxYSzXlD0yNRoA"   
    
 from decimal import Decimal
 
 # Create an order
+from decimal import Decimal, ROUND_HALF_UP
 @paypal_router.post("/orders")
 def create_order(data: OrderRequest):
    token = get_access_token()
-  
+   try:
+      Decimal(str(data.amount)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+   except Exception as e:
+      raise HTTPException(status_code=400, detail=f"Invalid amount: {data.amount}")
+   amount = str(data.amount)  
    payload = {
-       "intent": "CAPTURE",
-        "purchase_units": [
-            {"amount": {"currency_code": "CAD", "value": Decimal(data.amount)}}
-        ],
-        "application_context": {
-            "return_url": f"{PAYPAL_DOMAINS}/paypalReturnHome",
-            "cancel_url": f"{PAYPAL_DOMAINS}/paypalCancel",
-        },
+      "intent": "CAPTURE",
+      "purchase_units": [
+         {"amount": {"currency_code": "CAD", "value": str(amount)}}
+      ],
+      "application_context": {
+         "return_url": f"{PAYPAL_DOMAINS}/paypalReturnHome",
+         "cancel_url": f"{PAYPAL_DOMAINS}/paypalCancel",
+      },
    }
    resp = requests.post(
       PAYPAL_CHECKOUT_ORDERS_URL,
       json=payload,
-      headers={"Authorization": f"Bearer {token}"},
+      headers={
+         "Content-Type": "application/json",
+         "Authorization": f"Bearer {token}"},
    )
    if resp.status_code >= 300:
       raise HTTPException(resp.status_code, resp.text)
    logging.info(f"/orders resp.json(): {resp.json()}")
-  
-   return resp.json()
+   """
+   "id":"8DW94600TV331683S",
+   "status":"CREATED"
+   """
+#   this is the correct return, dont change it
+   created_order_return = resp.json()
+   logging.info(f"TEST Created PayPal order {created_order_return['id']}, status: {created_order_return['status']}")
+   
+   return created_order_return["id"]
 
 PAYPAL_BASE="https://api-m.sandbox.paypal.com"
 from core.session import get_db
 from sqlalchemy.orm import Session
+from fastapi import Depends
 
 @paypal_router.post("/orders/{order_id}/capture")
 def capture_and_save_order(order_id:str,db: Session= Depends(get_db)):
@@ -87,6 +101,18 @@ def capture_and_save_order(order_id:str,db: Session= Depends(get_db)):
          }
       }
    )
+   """order_payload = {
+    "intent": "CAPTURE",
+    "purchase_units": [
+        {
+            "amount": {
+                "currency_code": "USD",
+                "value": str(total)  # 👈 force string here
+            }
+        }
+    ]
+}
+"""
    
    if resp.status_code >= 300:
       raise HTTPException(resp.status_code, resp.text)
@@ -99,8 +125,8 @@ def capture_and_save_order(order_id:str,db: Session= Depends(get_db)):
    paypal_order_id = paypal_resp["id"]
    
    if paypal_resp["status"] == "COMPLETED":
-      saved_order = save_to_neon(order, paypal_order_id, paypal_resp, db)
-      return {"status": "success", "order_id": saved_order.id, "paypal_order_id": paypal_order_id}
+      # saved_order = save_to_neon(order, paypal_order_id, paypal_resp, db)
+      return {"status": "success", "paypal_order_id": paypal_order_id}
    else:
       raise HTTPException(400, "Payment not completed")   
 

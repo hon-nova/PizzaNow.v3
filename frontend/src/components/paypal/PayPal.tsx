@@ -9,24 +9,22 @@ function Message({ content }:{content:string}) {
 }
 
 export function PayPal() {
-  const { user, setUser } = useUserStore()
-  console.log(`paypal user: ${user}`)
-  const { cart } = useCartStore()
-  const BASE_PAYPAL_URL = import.meta.env.VITE_PAYPAL_BACKEND_URL
-  const cartItems = cart?.cartItems || []
+   const { user, setUser } = useUserStore()
+   const userId = user?.id
+   console.log(`paypal user: ${user}`)
+   const { cart, setUserId } = useCartStore()
+   const BASE_PAYPAL_URL = import.meta.env.VITE_PAYPAL_BACKEND_URL
+   const cartItems = cart?.cartItems || []
 
-  const [message, setMessage] = useState("")  
-/**
- * Property 'clientId' is missing in type '{ "client-id": any; "enable-funding": string; "buyer-country": string; currency: string; components: string; }' but required in type 'ReactPayPalScriptOptions'.ts(2741)
-script-options.d.ts(3, 5): 'clientId' is declared here.
- */
-  const initialOptions = {
-      clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
-      enableFunding: "venmo",
-      buyerCountry: "CA",
-      currency: "CAD",
-      components: "buttons",
-   }
+   const [message, setMessage] = useState("")  
+
+   const initialOptions = {
+         clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
+         enableFunding: "venmo",
+         buyerCountry: "CA",
+         currency: "CAD",
+         components: "buttons",
+      }
    useEffect(()=>{
       async function getUser(){
          const res = await fetch(`${BASE_PAYPAL_URL}/api/paypal/auth`,{
@@ -45,6 +43,11 @@ script-options.d.ts(3, 5): 'clientId' is declared here.
       }
       getUser()
      },[])
+      useEffect(()=>{
+      if (userId){
+         setUserId(userId)
+      }
+   },[setUserId,userId])
 
   return (
     <div className="grid grid-cols-12 gap-6 p-6 h-screen bg-gray-50">
@@ -101,8 +104,8 @@ script-options.d.ts(3, 5): 'clientId' is declared here.
       </div>
 
       {/* RIGHT COLUMN: PayPal Buttons */}
-      <div className="col-span-4 flex flex-col items-center">
-        <div className="bg-white rounded-xl shadow-lg p-6 w-full flex flex-col items-center">
+      <div className="col-span-5 flex flex-col">
+        <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col">
           <h2 className="text-xl font-bold mb-4">Checkout with PayPal</h2>
 
           <PayPalScriptProvider options={initialOptions}>
@@ -111,9 +114,27 @@ script-options.d.ts(3, 5): 'clientId' is declared here.
               createOrder={async () => {
                 const res = await fetch(`${BASE_PAYPAL_URL}/api/paypal/orders`, {
                   method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ 
-                     user_id: user?.id,
+                  headers: { 
+                     "Content-Type": "application/json" },
+                  body: JSON.stringify({ amount: cart.total.toFixed(2) }),
+                })
+               //  const data = await res.json()
+               //  console.log(`data sent to the BE expecting id, status: /api/paypal/orders data: ${data.id} ${data.status}`)
+
+               //  return data.id
+               const orderId = await res.text() // <-- BE returns plain string
+               console.log(`PayPal orderID: ${orderId}`)
+               return orderId.replace(/"/g, "")
+              }}
+              onApprove={async (data) => {
+               console.log(`IMPORTANT original PAYPAL onApprove() data: ${data}`)
+                const res = await fetch(
+                  `${BASE_PAYPAL_URL}/api/paypal/orders/${data.orderID}/capture`,
+                  { 
+                     method: "POST", 
+                     headers: { "Content-Type": "application/json" },
+                     body: JSON.stringify({
+                        user_id: user?.id,
                      cart_items: cart.cartItems.map(item => ({
                         pizza_id: item.pizza.id,
                         quantity: item.quantity,
@@ -123,17 +144,8 @@ script-options.d.ts(3, 5): 'clientId' is declared here.
                      shippingFee: cart.shippingFee,
                      taxes: cart.taxes,
                      total: cart.total
-                     
-                     }),
-                })
-                const data = await res.json()
-                console.log(`/api/paypal/orders data.id: ${data.id}`)
-                return data.id
-              }}
-              onApprove={async (data) => {
-                const res = await fetch(
-                  `${BASE_PAYPAL_URL}/api/paypal/order/${data.orderID}/capture`,
-                  { method: "POST", headers: { "Content-Type": "application/json" } }
+
+                     }) }
                 )
                 const captureData = await res.json()
                // BE returns  {"status": "success", "order_id": saved_order.id, "paypal_order_id": paypal_order_id}

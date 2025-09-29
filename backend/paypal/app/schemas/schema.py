@@ -1,10 +1,10 @@
 from decimal import Decimal
 from pydantic import BaseModel
-from typing import List
+from typing import List, Union
 
 
 class OrderRequest(BaseModel):
-   amount: Decimal
+   amount: Union[float,str]
 
 class OrderItemSchema(BaseModel):
    pizza_id: str

@@ -3,3 +3,4 @@ course01.json
 *.preview
 *.prod
 seed_pizza.py
+awsscripts/
