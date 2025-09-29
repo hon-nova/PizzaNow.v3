@@ -136,6 +136,7 @@ script-options.d.ts(3, 5): 'clientId' is declared here.
                   { method: "POST", headers: { "Content-Type": "application/json" } }
                 )
                 const captureData = await res.json()
+               // BE returns  {"status": "success", "order_id": saved_order.id, "paypal_order_id": paypal_order_id}
                 const transaction = captureData.purchase_units[0].payments.captures[0]
                 setMessage(`Transaction ${transaction.status}: ${transaction.id}`)
                 console.log("Capture result", captureData)

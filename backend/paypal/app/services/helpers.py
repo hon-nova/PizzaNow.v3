@@ -2,7 +2,9 @@ from paypal.app.schemas import OrderCreateRequest
 from paypal.app.models import Order
 from sqlalchemy.orm import Session
 
-def save_to_neon(order: OrderCreateRequest,db: Session):
+#  save_to_neon(order, paypal_order_id, paypal_resp, db)
+"""TODO: Fix Order or OrderItem where we need Order order_id, just one"""
+def save_to_neon(order: OrderCreateRequest, paypal_order_id:str, paypal_resp:str,db: Session):
    new_order_item = Order(
       user_id = order.user_id,
       cart_items = order.cart_items,

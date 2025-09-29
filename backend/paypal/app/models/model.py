@@ -6,10 +6,12 @@ from sqlalchemy import (
    Column,   
    Numeric,
    ForeignKey,
+   DateTime
   )
 from sqlalchemy.dialects.postgresql import UUID
 from core import Base
 from sqlalchemy.orm import relationship
+from datetime import datetime, timezone
 
 class Order(Base):
    __tablename__="orders"
@@ -21,7 +23,8 @@ class Order(Base):
    shipping_fee = Column(Numeric(10, 2), default=0)
    taxes = Column(Numeric(10, 2), default=0)
    total = Column(Numeric(10, 2), nullable=False)
-   transaction_date = Column(DateTime,default=datetime.now())
+      
+   transaction_date = Column(DateTime(timezone=True),default=lambda: datetime.now(timezone.utc))
 
    # relationship to order items
    items = relationship("OrderItem", back_populates="order")

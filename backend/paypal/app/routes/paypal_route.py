@@ -1,6 +1,7 @@
 import logging
 import os
 
+from backend.core.session import SessionLocal
 from fastapi import APIRouter,HTTPException
 from fastapi.responses import JSONResponse
 
@@ -43,9 +44,7 @@ from decimal import Decimal
 @paypal_router.post("/orders")
 def create_order(data: OrderRequest):
    token = get_access_token()
-   # import uuid
-   # paypal_request_id = str(uuid.uuid4())  
-   # 44ae74c1-8499-4e32-86b2-21e7b8be3fe3
+  
    payload = {
        "intent": "CAPTURE",
         "purchase_units": [
@@ -56,7 +55,6 @@ def create_order(data: OrderRequest):
             "cancel_url": f"{PAYPAL_DOMAINS}/paypalCancel",
         },
    }
-   # "A21AAIgqp5Bl4sx-HGYUS5CyIKotIEoN8pPjDQwVdmqurvTl2eBDDz41ryyfWmbbicdPdFj31DhUmfXpf50ZxYSzXlD0yNRoA",
    resp = requests.post(
       PAYPAL_CHECKOUT_ORDERS_URL,
       json=payload,
@@ -65,7 +63,64 @@ def create_order(data: OrderRequest):
    if resp.status_code >= 300:
       raise HTTPException(resp.status_code, resp.text)
    logging.info(f"/orders resp.json(): {resp.json()}")
-   """{
+  
+   return resp.json()
+
+PAYPAL_BASE="https://api-m.sandbox.paypal.com"
+from core.session import get_db
+from sqlalchemy.orm import Session
+
+@paypal_router.post("/orders/{order_id}/capture")
+def capture_and_save_order(order_id:str,db: Session= Depends(get_db)):
+   token = get_access_token()
+   resp = requests.post(
+      f"{PAYPAL_BASE}/v2/checkout/orders/{order_id}/capture",    
+      headers={"Authorization": f"Bearer {token}"},
+      json={
+         "payment_source": {
+            "paypal": {
+               "experience_context": {
+                  "return_url": f"{PAYPAL_DOMAINS}/paypalReturnHome",
+                  "cancel_url": f"{PAYPAL_DOMAINS}/paypalCancel",
+               }
+            }
+         }
+      }
+   )
+   
+   if resp.status_code >= 300:
+      raise HTTPException(resp.status_code, resp.text)
+   
+   paypal_resp = resp.json()
+   logging.info(f"/{order_id}/capture resp.json(): {resp.json()}")
+   """
+   keep: PayPal OrderId, status
+   """
+   paypal_order_id = paypal_resp["id"]
+   
+   if paypal_resp["status"] == "COMPLETED":
+      saved_order = save_to_neon(order, paypal_order_id, paypal_resp, db)
+      return {"status": "success", "order_id": saved_order.id, "paypal_order_id": paypal_order_id}
+   else:
+      raise HTTPException(400, "Payment not completed")   
+
+
+from paypal.app.services import save_to_neon
+from core.auth import get_current_user
+from fastapi import Depends
+from core.model import User
+from core.schema import LoginFilter
+
+
+@paypal_router.get("/auth",response_model=LoginFilter)
+def get_me(user: User = Depends(get_current_user)):
+   logging.info(f"paypal user in /auth route: {user.username}")
+   base= LoginFilter.model_validate(user)
+   # user_dict = base.model_dump()
+   
+   return base
+
+"""{
     "id": "7W328831TJ718173M",
     "status": "CREATED",
     "links": [
@@ -91,57 +146,5 @@ def create_order(data: OrderRequest):
         }
     ]
 }"""
-   return resp.json()
-
-PAYPAL_BASE="https://api-m.sandbox.paypal.com"
-
-@paypal_router.post("/orders/{order_id}/capture")
-def capture_order(order_id:str):
-   token = get_access_token()
-   resp = requests.post(
-      f"{PAYPAL_BASE}/v2/checkout/orders/{order_id}/capture",    
-      headers={"Authorization": f"Bearer {token}"},
-      json={
-         "payment_source": {
-            "paypal": {
-               "experience_context": {
-                  "return_url": "https://pizzanow-v3.vercel.app/paypalReturnHome",
-                  "cancel_url": "https://pizzanow-v3.vercel.app/paypalCancel",
-               }
-            }
-         }
-      }
-   )
-   if resp.status_code >= 300:
-      raise HTTPException(resp.status_code, resp.text)
-   """
-   keep: PayPal OrderId, status
-   """
-   logging.info(f"/{order_id}/capture resp.json(): {resp.json()}")
-   return resp.json()
-
-from paypal.app.schemas import OrderCreateRequest
-from paypal.app.services import save_to_neon
-
-@paypal_router.post("/orders/create")
-def create_order_in_db(order: OrderCreateRequest):
-  
-   saved_order_id = save_to_neon(order)  # your DB function
-   return {"order_id": saved_order_id, "status": "CREATED"}
-
-
-from core.auth import get_current_user
-from fastapi import Depends
-from core.model import User
-from core.schema import LoginFilter
-
-
-@paypal_router.get("/auth",response_model=LoginFilter)
-def get_me(user: User = Depends(get_current_user)):
-   logging.info(f"paypal user in /auth route: {user.username}")
-   base= LoginFilter.model_validate(user)
-   # user_dict = base.model_dump()
-   
-   return base
 
 
