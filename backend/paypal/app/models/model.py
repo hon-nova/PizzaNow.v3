@@ -6,26 +6,39 @@ from sqlalchemy import (
    Column,   
    Numeric,
    ForeignKey,
-   DateTime
+   DateTime,
+   String
   )
 from sqlalchemy.dialects.postgresql import UUID
 from core import Base
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 
+from enum import Enum as PyEnum
+from sqlalchemy import Column, String
+
+class ShipmentStatus(str, PyEnum):
+   pending = "pending"
+   succeeded = "succeeded"
+   failed = "failed"
+
+
 class Order(Base):
    __tablename__="orders"
    
    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-   user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+   user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)    
+   
+   paypal_order_id = Column(String, unique=True, nullable=True)
 
    discount = Column(Numeric(10, 2), default=0)
    shipping_fee = Column(Numeric(10, 2), default=0)
    taxes = Column(Numeric(10, 2), default=0)
    total = Column(Numeric(10, 2), nullable=False)
       
-   transaction_date = Column(DateTime(timezone=True),default=lambda: datetime.now(timezone.utc))
-
+   transaction_date = Column(DateTime(timezone=True),default=lambda: datetime.now(timezone.utc))     
+   shipment_status = Column(String, default=ShipmentStatus.pending.value)
+  
    # relationship to order items
    items = relationship("OrderItem", back_populates="order")
    

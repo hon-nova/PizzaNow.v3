@@ -1,6 +1,7 @@
 import logging
 import os
-
+from textwrap import indent
+import uuid
 from fastapi import APIRouter,HTTPException
 # from fastapi.responses import JSONResponse
 
@@ -68,65 +69,78 @@ def create_order(data: OrderRequest):
    )
    if resp.status_code >= 300:
       raise HTTPException(resp.status_code, resp.text)
-   logging.info(f"/orders resp.json(): {resp.json()}")
-   """
-   "id":"8DW94600TV331683S",
-   "status":"CREATED"
-   """
+  
 #   this is the correct return, dont change it
-   created_order_return = resp.json()
-   logging.info(f"TEST Created PayPal order {created_order_return['id']}, status: {created_order_return['status']}")
-   
+   created_order_return = resp.json()  
    return created_order_return["id"]
+
 
 PAYPAL_BASE="https://api-m.sandbox.paypal.com"
 from core.session import get_db
 from sqlalchemy.orm import Session
-from fastapi import Depends
+from fastapi import Depends, Body
+from paypal.app.schemas import OrderCreateRequest
+from paypal.app.models import Order
+
+def order_to_dict(order):
+    return {
+        "id": str(order.id),
+        "user_id": str(order.user_id),
+        "paypal_order_id": order.paypal_order_id,
+        "discount": float(order.discount),
+        "shipping_fee": float(order.shipping_fee),
+        "taxes": float(order.taxes),
+        "total": float(order.total),
+        "transaction_date": order.transaction_date.isoformat(),
+        "shipment_status": order.shipment_status,
+    }
+
+from paypal.app.schemas import OrderOut  # Pydantic schema
 
 @paypal_router.post("/orders/{order_id}/capture")
-def capture_and_save_order(order_id:str,db: Session= Depends(get_db)):
+def capture_and_save_order(order_id:str,payload:dict = Body(...),db: Session= Depends(get_db)):
+   
    token = get_access_token()
+   logging.info(f"order_id: {order_id}")
    resp = requests.post(
       f"{PAYPAL_BASE}/v2/checkout/orders/{order_id}/capture",    
-      headers={"Authorization": f"Bearer {token}"},
-      json={
-         "payment_source": {
-            "paypal": {
-               "experience_context": {
-                  "return_url": f"{PAYPAL_DOMAINS}/paypalReturnHome",
-                  "cancel_url": f"{PAYPAL_DOMAINS}/paypalCancel",
-               }
-            }
-         }
-      }
-   )
-   """order_payload = {
-    "intent": "CAPTURE",
-    "purchase_units": [
-        {
-            "amount": {
-                "currency_code": "USD",
-                "value": str(total)  # 👈 force string here
-            }
-        }
-    ]
-}
-"""
+      headers={
+         "Content-Type":"application/json",
+         "Authorization": f"Bearer {token}",
+         "PayPal-Request-Id": str(uuid.uuid4())}, 
+      
+      json={}     
+      )
    
    if resp.status_code >= 300:
       raise HTTPException(resp.status_code, resp.text)
    
    paypal_resp = resp.json()
-   logging.info(f"/{order_id}/capture resp.json(): {resp.json()}")
-   """
-   keep: PayPal OrderId, status
-   """
-   paypal_order_id = paypal_resp["id"]
+   logging.info(f"IMPORTANT MOST capture paypal_resp: {paypal_resp}")
+   logging.info(f" BEFORE STATUS COMPLETED ...")
    
+   try:
+      order = OrderCreateRequest(**payload)
+   except Exception as e:
+      logging.error(f"Validation failed: {e}")
+      raise HTTPException(422, "Invalid payload format")
+
    if paypal_resp["status"] == "COMPLETED":
-      # saved_order = save_to_neon(order, paypal_order_id, paypal_resp, db)
-      return {"status": "success", "paypal_order_id": paypal_order_id}
+      saved_order = save_to_neon(order, db)
+      # logging.info(f"IMPORTANT saved new order_id to neon: {saved_order.id}")
+      # logging.info(f"TEST ONLY New Order on Neon")
+      # saved = db.query(Order).filter(Order.paypal_order_id == order_id).first()     
+
+      # order_data = OrderOut.from_orm(saved)
+      # logging.info(order_data.json(indent=2))
+      
+      # logging.info(f" DURING STATUS COMPLETED ...")
+      return  {
+         "status":  paypal_resp["status"],
+         "order_id": saved_order.id,
+         "paypal_order_id": order_id
+         }           
+        
    else:
       raise HTTPException(400, "Payment not completed")   
 

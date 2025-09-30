@@ -11,7 +11,7 @@ function Message({ content }:{content:string}) {
 export function PayPal() {
    const { user, setUser } = useUserStore()
    const userId = user?.id
-   console.log(`paypal user: ${user}`)
+   console.log(`paypal user: ${user?.username}`)
    const { cart, setUserId } = useCartStore()
    const BASE_PAYPAL_URL = import.meta.env.VITE_PAYPAL_BACKEND_URL
    const cartItems = cart?.cartItems || []
@@ -35,9 +35,7 @@ export function PayPal() {
             credentials:"include"
          })
          const result = await res.json()
-         if(result){
-            console.log(`current user:`)
-            console.log(result)
+         if(result){            
             setUser(result)
          }
       }
@@ -118,11 +116,8 @@ export function PayPal() {
                      "Content-Type": "application/json" },
                   body: JSON.stringify({ amount: cart.total.toFixed(2) }),
                 })
-               //  const data = await res.json()
-               //  console.log(`data sent to the BE expecting id, status: /api/paypal/orders data: ${data.id} ${data.status}`)
-
-               //  return data.id
-               const orderId = await res.text() // <-- BE returns plain string
+               
+               const orderId = await res.text()
                console.log(`PayPal orderID: ${orderId}`)
                return orderId.replace(/"/g, "")
               }}
@@ -138,20 +133,24 @@ export function PayPal() {
                      cart_items: cart.cartItems.map(item => ({
                         pizza_id: item.pizza.id,
                         quantity: item.quantity,
-                        subAmount: item.subAmount,
+                        sub_amount: item.subAmount,
                      })),
                      discount: cart.discount,
-                     shippingFee: cart.shippingFee,
+                     shipping_fee: cart.shippingFee,
                      taxes: cart.taxes,
-                     total: cart.total
-
+                     total: cart.total,
+                     paypal_order_id: data.orderID
                      }) }
                 )
                 const captureData = await res.json()
-               // BE returns  {"status": "success", "order_id": saved_order.id, "paypal_order_id": paypal_order_id}
-                const transaction = captureData.purchase_units[0].payments.captures[0]
-                setMessage(`Transaction ${transaction.status}: ${transaction.id}`)
-                console.log("Capture result", captureData)
+                console.log(`captureData from BE: ${captureData.status}`)
+               console.log(`order_id BE: ${captureData.order_id}`)
+              
+               //  const transaction = captureData.purchase_units[0].payments.captures[0]
+               //  setMessage(`Transaction ${transaction.status}: ${transaction.id}`)
+               //  console.log("Capture result", captureData)
+               console.log(`Order saved status: ${captureData}}`);
+               setMessage(`Transaction completed!`);
               }}
             />
           </PayPalScriptProvider>
