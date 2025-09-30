@@ -3,8 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
-# from core.session import Base, engine 
-from bot.app.routes import bot_router
+from bot.app.routes import bot_router,graph_router
 # from core.session import SessionLocal
 from core.model import User
 
@@ -26,19 +25,14 @@ app.add_middleware(
     
 # app.include_router(test_router, prefix="/test") 
 app.include_router(bot_router) 
-# app.include_router(auth_google_router) 
-# app.include_router(auth_linkedin_router) 
-
-# logging.info(f"DATABASE_URL CURRENTLY: {settings.DATABASE_URL}")
-# logger.info("@main Routers: %s", app.routes)
-
+app.include_router(graph_router) 
 
 # if settings.ENV.upper()=="DEV":
 #    Base.metadata.create_all(bind=engine)
 
-@app.get("/ping")
+@app.get("/bot-ping")
 def ping():
-   return {"message": "pong"}
+   return {"8082": "pong"}
    
 if __name__ == "__main__":
    port = int(os.environ.get("PORT", 8082))

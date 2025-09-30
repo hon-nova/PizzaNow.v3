@@ -2,6 +2,8 @@ import { useState,useEffect,useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import styles from "./style/query.module.css"
+import { useUserStore } from "../stores/userStore"
+
 
 interface Message {
    sender: "user" | "bot"
@@ -15,34 +17,59 @@ export const BenBotChat = () => {
    const [messages, setMessages] = useState<Message[]>([])
    const [input, setInput] = useState("")
    const navigate = useNavigate()
+
+      const { user, setUser  } = useUserStore()
+      console.log(`logged-in user: `, user )
+     
+      const BASE_URL = import.meta.env.VITE_BOT_BACKEND_URL
+      
+      console.log(`Initial BASE_URL: ${BASE_URL}`)   
+      useEffect(()=>{
+         async function getUser(){
+            const res = await fetch(`${BASE_URL}/api/pizzas/auth`,{
+               method:"GET",
+               headers:{
+                     "Content-Type":"application/json",               
+                  },
+               credentials:"include"
+            })
+            const result = await res.json()
+            if(result){
+               console.log(`current user:`)
+               console.log(result)
+               setUser(result)
+            }
+         }
+         getUser()
+      },[])
    function handleOpenStatus(){
       setOpen(!open)
       setIsIconOpen(!isIconOpen)
    }
-   const BASE_URL = import.meta.env.VITE_BACKEND_URL 
-   useEffect(()=>{
-      const verifyToken = async () => {
-         const res = await fetch(`${BASE_URL}/api/auth/verify-token`, {
-            method: "GET",
-            headers: {
-               "Content-Type": "application/json"
-            },
-            credentials: "include"
-         })
-         const result = await res.json()
-         console.log(`IMPORTANT result: ${result}`)
-         if (result?.detail){
-            console.log(`Token verification failed: ${result.detail}`)
-            navigate("/")
-         }
-         if (result) {
-            console.log(`Token verification result:`)
-            console.log(result)
-            //  navigate("/query")
-         }
-      }
-      verifyToken()
-   },[])
+   
+   // useEffect(()=>{
+   //    const verifyToken = async () => {
+   //       const res = await fetch(`${BASE_URL}/api/auth/verify-token`, {
+   //          method: "GET",
+   //          headers: {
+   //             "Content-Type": "application/json"
+   //          },
+   //          credentials: "include"
+   //       })
+   //       const result = await res.json()
+   //       console.log(`IMPORTANT result: ${result}`)
+   //       if (result?.detail){
+   //          console.log(`Token verification failed: ${result.detail}`)
+   //          navigate("/")
+   //       }
+   //       if (result) {
+   //          console.log(`Token verification result:`)
+   //          console.log(result)
+   //          //  navigate("/query")
+   //       }
+   //    }
+   //    verifyToken()
+   // },[])
 
    const inputRef = useRef<HTMLInputElement>(null)
    useEffect(() => {
@@ -61,7 +88,7 @@ export const BenBotChat = () => {
          inputRef.current.focus(); // re-focus after send
       }
       try {
-         const res = await axios.post(`${BASE_URL}/query`, 
+         const res = await axios.post(`${BASE_URL}/api/query`, 
             { text: input },
             {withCredentials: true,
                headers: {

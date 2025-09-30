@@ -1,35 +1,33 @@
 from fastapi import APIRouter, Depends, HTTPException
+import uuid
+from core.auth import get_current_user
+from core.model import User
 
-from app.services.custom import get_current_user
-from langchain_core.messages import HumanMessage, AIMessage
-from langgraph.graph import MessagesState
-# from langgraph.prebuilt import ToolMessage,ToolMessage
-# from langgraph.prebuilt.tools import _ToolMessage
-# from langgraph.prebuilt import ToolMessage
+from langchain_core.messages import HumanMessage
 
 from pydantic import BaseModel
-from app.graph.graph_builder import AppGraph, build_graph
-from app.core import get_storage_client
-from app.models.model import User
-import uuid
+from bot.app.services.graphbot import AppGraph, build_graph
+import traceback  
+# from core import get_storage_client
+
+def log_node(event):
+   print(f"Node {event['name']} | {event['type']}")
 import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-import traceback  
-
 
 class Query(BaseModel):
    text: str
 
 graph = build_graph()  
-graph_router = APIRouter()
+graph_router = APIRouter(prefix="/api",tags=["bot"])
 
 thread_id =  uuid.uuid4()
 config = {"thread_id": thread_id}
 @graph_router.post("/query")
 def query_route(query: Query, user: User = Depends(get_current_user)):
    try:
-      client=get_storage_client()      
+      # client=get_storage_client()      
       user_id = str(user.id) if user else None   
     
       state: AppGraph = {
@@ -53,6 +51,6 @@ def query_route(query: Query, user: User = Depends(get_current_user)):
       return {"response": output_text}  
       
    except Exception as e:
-      logger.error("🔥 Exception in /query")
+      logger.error("Exception in /query")
       logger.error(traceback.format_exc()) 
       raise HTTPException(status_code=500,detail=f"EXCEPTION /query: {str(e)}")

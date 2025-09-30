@@ -1,15 +1,23 @@
 import logging
-import os
-from textwrap import indent
 import uuid
 from fastapi import APIRouter,HTTPException
-# from fastapi.responses import JSONResponse
-
+from datetime import datetime
+import json
 from core import settings
-from paypal.app.schemas import OrderRequest
+from paypal.app.schemas import OrderRequest,OrderCreateRequest, OrderOut
+from paypal.app.services import save_to_neon
+from core.auth import get_current_user
+from core.model import User
+from core.schema import LoginFilter
+
+from core.session import get_db
+from sqlalchemy.orm import Session
+from fastapi import Depends, Body
+
 
 paypal_router = APIRouter(prefix="/api/paypal", tags=["paypal"])
 
+PAYPAL_BASE="https://api-m.sandbox.paypal.com"
 PAYPAL_CLIENT_ID=settings. PAYPAL_CLIENT_ID
 PAYPAL_CLIENT_SECRET=settings.PAYPAL_CLIENT_SECRET
 PAYPAL_OAUTH2_TOKEN_URL=settings.PAYPAL_OAUTH2_TOKEN_URL
@@ -31,16 +39,13 @@ def get_access_token():
          auth=(PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET),
          headers={"Accept": "application/json"}
       )
-      resp.raise_for_status()
-      # logging.info(f"resp.json() from PayPal: {resp.json()["access_token"]}")
+      resp.raise_for_status()     
       return resp.json()['access_token']
    except requests.RequestException as e:
-      raise HTTPException(status_code=500, detail=str(e))
-   #  "access_token": "A21AAIgqp5Bl4sx-HGYUS5CyIKotIEoN8pPjDQwVdmqurvTl2eBDDz41ryyfWmbbicdPdFj31DhUmfXpf50ZxYSzXlD0yNRoA"   
+      raise HTTPException(status_code=500, detail=str(e))  
    
 from decimal import Decimal
 
-# Create an order
 from decimal import Decimal, ROUND_HALF_UP
 @paypal_router.post("/orders")
 def create_order(data: OrderRequest):
@@ -74,31 +79,8 @@ def create_order(data: OrderRequest):
    created_order_return = resp.json()  
    return created_order_return["id"]
 
-
-PAYPAL_BASE="https://api-m.sandbox.paypal.com"
-from core.session import get_db
-from sqlalchemy.orm import Session
-from fastapi import Depends, Body
-from paypal.app.schemas import OrderCreateRequest
-from paypal.app.models import Order
-
-def order_to_dict(order):
-    return {
-        "id": str(order.id),
-        "user_id": str(order.user_id),
-        "paypal_order_id": order.paypal_order_id,
-        "discount": float(order.discount),
-        "shipping_fee": float(order.shipping_fee),
-        "taxes": float(order.taxes),
-        "total": float(order.total),
-        "transaction_date": order.transaction_date.isoformat(),
-        "shipment_status": order.shipment_status,
-    }
-
-from paypal.app.schemas import OrderOut  # Pydantic schema
-
 @paypal_router.post("/orders/{order_id}/capture")
-def capture_and_save_order(order_id:str,payload:dict = Body(...),db: Session= Depends(get_db)):
+def capture_and_save_order(order_id:str,payload:dict = Body(...),db:Session= Depends(get_db)):
    
    token = get_access_token()
    logging.info(f"order_id: {order_id}")
@@ -110,31 +92,39 @@ def capture_and_save_order(order_id:str,payload:dict = Body(...),db: Session= De
          "PayPal-Request-Id": str(uuid.uuid4())}, 
       
       json={}     
-      )
-   
+      )   
    if resp.status_code >= 300:
       raise HTTPException(resp.status_code, resp.text)
    
-   paypal_resp = resp.json()
-   logging.info(f"IMPORTANT MOST capture paypal_resp: {paypal_resp}")
-   logging.info(f" BEFORE STATUS COMPLETED ...")
+   paypal_resp = resp.json() 
    
-   try:
-      order = OrderCreateRequest(**payload)
-   except Exception as e:
-      logging.error(f"Validation failed: {e}")
-      raise HTTPException(422, "Invalid payload format")
+   # 3. Build OrderCreateRequest manually
+   order_data = {
+        "user_id": payload["user_id"],
+        "paypal_order_id": order_id,
+        "discount": payload.get("discount", 0),
+        "shipping_fee": payload.get("shipping_fee", 0),
+        "taxes": payload.get("taxes", 0),
+        "total": payload.get("total", 0),
+        "items": payload["cart_items"],  # MUST exist
+        "transaction_date": datetime.utcnow(),
+    }
+   
+   order_req = OrderCreateRequest(**order_data)  
 
    if paypal_resp["status"] == "COMPLETED":
-      saved_order = save_to_neon(order, db)
-      # logging.info(f"IMPORTANT saved new order_id to neon: {saved_order.id}")
-      # logging.info(f"TEST ONLY New Order on Neon")
-      # saved = db.query(Order).filter(Order.paypal_order_id == order_id).first()     
-
-      # order_data = OrderOut.from_orm(saved)
-      # logging.info(order_data.json(indent=2))
+      saved_order = save_to_neon(order_req, db)
       
-      # logging.info(f" DURING STATUS COMPLETED ...")
+      """
+      logging.info(f"TEST ONLY @paypal_router")    
+
+      saved = db.query(Order).filter(Order.paypal_order_id == order_id).first()  
+      order_out = OrderOut.from_orm(saved)      
+
+      logging.info(json.dumps(order_out.model_dump(), default=str,indent=2))
+      # OR logging.info(order_out.model_dump_json(indent=2))
+       logging.info(f" DURING STATUS COMPLETED ...")      """     
+      
       return  {
          "status":  paypal_resp["status"],
          "order_id": saved_order.id,
@@ -145,11 +135,7 @@ def capture_and_save_order(order_id:str,payload:dict = Body(...),db: Session= De
       raise HTTPException(400, "Payment not completed")   
 
 
-from paypal.app.services import save_to_neon
-from core.auth import get_current_user
-from fastapi import Depends
-from core.model import User
-from core.schema import LoginFilter
+
 
 
 @paypal_router.get("/auth",response_model=LoginFilter)

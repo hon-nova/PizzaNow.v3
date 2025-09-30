@@ -1,12 +1,13 @@
 from decimal import Decimal
 from pydantic import BaseModel
-from typing import List, Union
+from typing import List, Union, Optional
 
 
 class OrderRequest(BaseModel):
    amount: Union[float,str]
 
 class OrderItemSchema(BaseModel):
+   order_id: Optional[str] = None 
    pizza_id: str
    quantity: int
    sub_amount: float
@@ -14,7 +15,7 @@ class OrderItemSchema(BaseModel):
 class OrderCreateRequest(BaseModel):
    user_id: str   
    paypal_order_id: str
-   cart_items: List[OrderItemSchema]
+   items: List[OrderItemSchema]
    discount: float = 0
    shipping_fee: float = 0
    taxes: float = 0

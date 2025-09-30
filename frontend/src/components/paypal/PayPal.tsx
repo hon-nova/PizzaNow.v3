@@ -142,20 +142,16 @@ export function PayPal() {
                      paypal_order_id: data.orderID
                      }) }
                 )
-                const captureData = await res.json()
-                console.log(`captureData from BE: ${captureData.status}`)
-               console.log(`order_id BE: ${captureData.order_id}`)
-              
-               //  const transaction = captureData.purchase_units[0].payments.captures[0]
-               //  setMessage(`Transaction ${transaction.status}: ${transaction.id}`)
-               //  console.log("Capture result", captureData)
-               console.log(`Order saved status: ${captureData}}`);
+               const captureData = await res.json()
+               console.log(`captureData from BE: ${captureData.status}`)
+               console.log(`order_id BE: ${captureData.order_id}`)    
                setMessage(`Transaction completed!`);
               }}
             />
           </PayPalScriptProvider>
-
-          <Message content={message} />
+         <div className="text-green-600 font-bold">
+            <Message content={message} />
+         </div>         
         </div>
       </div>
     </div>

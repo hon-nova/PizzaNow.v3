@@ -2,6 +2,10 @@ from fastapi import APIRouter, Query
 from core.crud import get_all_pizzas
 from core.session import SessionLocal
 
+from core.auth import get_current_user
+from fastapi import Depends
+from core.model import User
+from core.schema import LoginFilter
 import logging
 logger = logging.getLogger("uvicorn.error") 
 bot_router = APIRouter(prefix="/api/pizzas", tags=["pizza"])
@@ -13,13 +17,7 @@ def get_pizzas(page: int = Query(1), limit: int = Query(8)):
       # logging.info(get_all_pizzas(db, page, limit))
       return get_all_pizzas(db, page, limit)
    finally:
-      db.close()
- 
-
-from core.auth import get_current_user
-from fastapi import Depends
-from core.model import User
-from core.schema import LoginFilter
+      db.close() 
 
 
 @bot_router.get("/auth",response_model=LoginFilter)
