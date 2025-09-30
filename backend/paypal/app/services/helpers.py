@@ -2,7 +2,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from uuid import UUID as UUIDType
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-from paypal.app.models import Order, OrderItem
+from core.model import Order, OrderItem
 from paypal.app.schemas import OrderCreateRequest, OrderOut
 
 def order_to_dict(order):

@@ -19,29 +19,8 @@ Monday – Sunday: 7:30 AM – 10:30 PM
 ### Business Owner
 - Name: Hon Nguyen
 
-## Menu Overview
-
-### Veggie Pizzas
-- **Classic Margherita**
-- **Garden Delight** *(peppers, onions, mushrooms, olives)*
-- **Pesto Veggie Crunch**
-- **Vegan Supreme** *(Dairy-free cheese)*
-
-### Meat Pizzas
-- **Pepperoni Classic**
-- **BBQ Chicken Feast**
-- **Bacon Lovers**
-- **Meatball Explosion**
-
-### Spicy Add-ons
-- Spicy Jalapeños
-- Chili Flake Infusion
-- Spicy Sausage
-- Pepper Drizzle *(Limited edition)*
-
 ### Drinks
-> Please visit the website — featured drinks are updated daily.
-
+> Please advise that currently we're not serving beverage section
 ---
 ## User Authentication & Rewards
 
@@ -55,7 +34,6 @@ Monday – Sunday: 7:30 AM – 10:30 PM
 - Guest checkout may be offered in the future, but full features (like order tracking and rewards) require login.
 
 - Users can sign in via Google, LinkedIn, or create a custom PizzaNow account.
-
 
 ## Customer Service & Issue Resolution
 

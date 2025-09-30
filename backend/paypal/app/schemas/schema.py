@@ -21,7 +21,6 @@ class OrderCreateRequest(BaseModel):
    taxes: float = 0
    total: float
 
-from paypal.app.models import Order
 from uuid import UUID
 
 class OrderItemOut(BaseModel):

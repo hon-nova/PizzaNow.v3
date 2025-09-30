@@ -3,9 +3,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
+from core.model import User
 from bot.app.routes import bot_router,graph_router
 # from core.session import SessionLocal
-from core.model import User
+from bot.app.services import respond_shipment_status
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -29,12 +30,16 @@ app.include_router(graph_router)
 
 # if settings.ENV.upper()=="DEV":
 #    Base.metadata.create_all(bind=engine)
+print(f"RESPOND_SHIPMENT_STATUS")
+print(respond_shipment_status("591c1973-8e02-4a29-a30c-905fe720ab58"))
 
 @app.get("/bot-ping")
 def ping():
    return {"8082": "pong"}
    
 if __name__ == "__main__":
+   
+
    port = int(os.environ.get("PORT", 8082))
    import uvicorn
    uvicorn.run("app.main:app", host="0.0.0.0", port=port)

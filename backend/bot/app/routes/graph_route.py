@@ -1,19 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException
+from langchain_core.messages import HumanMessage
+from pydantic import BaseModel
+
 import uuid
 from core.auth import get_current_user
 from core.model import User
+from bot.app.services import AppGraph, build_graph
 
-from langchain_core.messages import HumanMessage
-
-from pydantic import BaseModel
-from bot.app.services.graphbot import AppGraph, build_graph
 import traceback  
+import logging
+logging.basicConfig(level=logging.INFO)
 # from core import get_storage_client
 
 def log_node(event):
    print(f"Node {event['name']} | {event['type']}")
-import logging
-logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger(__name__)
 
 class Query(BaseModel):
@@ -24,6 +25,7 @@ graph_router = APIRouter(prefix="/api",tags=["bot"])
 
 thread_id =  uuid.uuid4()
 config = {"thread_id": thread_id}
+
 @graph_router.post("/query")
 def query_route(query: Query, user: User = Depends(get_current_user)):
    try:

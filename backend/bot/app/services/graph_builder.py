@@ -5,6 +5,8 @@ from langchain_google_vertexai import ChatVertexAI
 from core.config import settings
 from langgraph.graph import StateGraph, START, MessagesState
 from langgraph.prebuilt import tools_condition, ToolNode
+from bot.app.services import load_blueprint,respond_shipment_status
+from langchain.tools import Tool
 
 def tracer(fn):
    def wrapped(state):
@@ -12,35 +14,20 @@ def tracer(fn):
       result = fn(state)
       print(f"◀ Exit {fn.__name__} → {result}")
       return result
-   return wrapped
+   return wrapped  
 
-def add(a: int, b: int) -> int:
-    """Adds a and b.
+shipment_status_tool = Tool(
+   name="respond_shipment_status",
+   func=respond_shipment_status,
+   description="Check the shipment status of a given order_id. If status is pending or failed, notify an admin."
+)
 
-    Args:
-        a: first int
-        b: second int
-    """
-    return a + b
 
-def multiply(a: int, b: int|str) -> int|str:
-   """Multiplies a and b.
-
-   Args:
-      a: first int
-      b: second int
-   """
-   if isinstance(b,(int,str)):
-      return a * b
-  
-def divide(a: int, b: int) -> float|None:
-   """Divide a and b.
-
-   Args:
-      a: first int
-      b: second int
-   """
-   return a/b if b!=0 else None
+load_blueprint_tool = Tool(
+    name="load_blueprint",
+    func=load_blueprint,
+    description="Answer PizzaNow business questions. Summarize only relevant info, do not dump entire blueprint."
+)
 
 class AppGraph(TypedDict):
    user_id: Optional[str]
@@ -49,21 +36,26 @@ class AppGraph(TypedDict):
 memory = MemorySaver()
 def build_graph():    
    
-   tools = [add, multiply, divide]   
+   tools = [load_blueprint_tool,shipment_status_tool]   
    llm = ChatVertexAI(
       model="gemini-2.5-flash",
       project=settings.PROJECT_ID,
       location=settings.VERTEX_REGION
    )
    llm_with_tools = llm.bind_tools(tools)
+   llm_with_tools._tools = tools 
    
-   sys_msg = SystemMessage(
-    content=(
-        "You are a helpful assistant. You can perform arithmetic operations, "
-        "and multiplying a string repeats it, like Python. "
-        "Always give clear explanations for arithmetic questions. "
-        "Remember their introduced name and explicitly tell them if ask or request. "
-        "Keep track of the conversation with the user and summarize it at the end of the session."    ))
+   sys_msg = SystemMessage(  
+      content=(
+               "You are benBot, PizzaNow assistant. "
+               "Use load_blueprint_tool to answer questions. "
+               "Use shipment_status_tool tool for order updates. "
+               "Do not dump raw blueprint; only return relevant info. "
+               "If an order is pending or failed, remind the user that admin has been notified. "
+               "Remember the user's introduced name when used. "
+               "Summarize the conversation at the end of the session if explicitly asked."
+         )
+   )
 
    @tracer
    def login_node(state:AppGraph): 
@@ -99,6 +91,23 @@ def build_graph():
          response_metadata=getattr(llm_response, "response_metadata", {}),
          tool_calls=getattr(llm_response, "tool_calls", None)
       ))
+      if getattr(llm_response, "tool_calls", None):
+         for call in llm_response.tool_calls:
+            tool_name = call["name"]
+            tool_args = call.get("args", {})
+
+            # Map LLM arg names to your tool function
+            # If your tool expects input=..., convert from __arg1
+            if "__arg1" in tool_args:
+                  tool_args["input"] = tool_args.pop("__arg1")
+
+            tool = next((t for t in getattr(llm_with_tools, "_tools", []) if t.name == tool_name), None)
+
+            if tool:
+               # LangChain usually sends the first argument as value of __arg1 or similar
+               input_value = list(tool_args.values())[0] if tool_args else ""
+               result = tool.func(input_value)
+               state["messages"].append(AIMessage(content=result))
       return state  
    
    builder = StateGraph(AppGraph)   
