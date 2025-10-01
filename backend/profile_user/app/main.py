@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
 from core.session import Base, engine 
-from profile.app.routes import profile_router
+from profile_user.app.routes import profile_router
 
 
 import logging

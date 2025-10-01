@@ -113,14 +113,14 @@ export function Login() {
                onClick={() => {
                   window.location.href = `${import.meta.env.VITE_AUTH_BACKEND_URL}/api/auth/google/login`;
                }}
-               className="flex flex-row space-x-2 bg-black text-white py-1 px-4 rounded-full border rounded cursor-pointer"
+               className="flex flex-row space-x-2 bg-black text-white py-2 px-4 rounded-full border rounded cursor-pointer"
                > <FcGoogle size={30}/> <span>Sign in with Google</span>
             </button>
             <button
                onClick={() => {
                   window.location.href = `${import.meta.env.VITE_AUTH_BACKEND_URL}/api/auth/linkedin/login`
                }}
-               className="flex flex-row space-x-2 bg-blue-700 text-white py-1 px-4 rounded-full border rounded cursor-pointer"
+               className="flex flex-row justify-center space-x-2 bg-blue-700 text-white py-2 px-4 rounded-full border rounded cursor-pointer"
                > <LiaLinkedin size={30}/> <span>Sign in with LinkedIn</span>
                
             </button>

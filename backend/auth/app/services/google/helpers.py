@@ -4,7 +4,7 @@ import logging
 from fastapi import HTTPException, Depends
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests  # used ONLY for id_token verification
-from core import get_db
+from core.session import get_db
 
 logger = logging.getLogger("uvicorn.error")
 

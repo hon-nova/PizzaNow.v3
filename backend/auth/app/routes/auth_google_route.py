@@ -42,7 +42,7 @@ from fastapi import Request, Depends
 from sqlalchemy.orm import Session
 from core.session import get_db
 import requests
-from auth.app.schemas.schema import RegisterResponse
+from auth.app.schemas import RegisterFilter
 from auth.app.services.custom import create_access_token
 
 @auth_google_router.get("/google/callback")
@@ -72,9 +72,9 @@ def google_callback(request: Request,db: Session = Depends(get_db)):
       # logger.info("TEST ONLY: Google User at google/callback: %s", g_user)
       g_access_token = token_data.get("access_token")  
       
-      # logger.info(f"g_access_token: {g_access_token}")
+      logger.info(f"TEST TEST g_access_token: {g_access_token}")
       
-      user_obj = RegisterResponse.model_validate(g_user)
+      user_obj = RegisterFilter.model_validate(g_user)
       user_dict = user_obj.model_dump()
       from fastapi.encoders import jsonable_encoder      
       user_dict = jsonable_encoder(user_dict)
@@ -97,7 +97,7 @@ def google_callback(request: Request,db: Session = Depends(get_db)):
          }
       
       response.set_cookie(
-         key="access_token",
+         key="k8s_token",
          value=access_token,
          **cookie_params
       )   

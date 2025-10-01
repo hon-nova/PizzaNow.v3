@@ -2,7 +2,7 @@ from fastapi import APIRouter,Depends
 
 from core.auth import get_current_user
 from core.model import User
-from profile_user.app.schemas import LoginFilter
+from core.schema import LoginFilter
 
 profile_router = APIRouter(prefix="/api/auth", tags=["auth"])
 import logging

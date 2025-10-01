@@ -6,7 +6,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 import requests
 
-from auth.app.schemas import RegisterResponse
+from auth.app.schemas import RegisterFilter
 from core.session import get_db
 from auth.app.services.linkedin import save_linkedin_user_to_db
 from auth.app.services.custom import create_access_token
@@ -102,7 +102,7 @@ def linkedin_callback(request: Request, db: Session = Depends(get_db)):
    logging.warning('LinkedIn user SAVED: %s',l_user)      
    
    # user_dict = UserResponse.model_validate(user_db).model_dump()   
-   user_obj = RegisterResponse.model_validate(l_user)
+   user_obj = RegisterFilter.model_validate(l_user)
    user_dict = user_obj.model_dump()
    from fastapi.encoders import jsonable_encoder      
    user_dict = jsonable_encoder(user_dict)
@@ -123,7 +123,7 @@ def linkedin_callback(request: Request, db: Session = Depends(get_db)):
          "secure": False if settings.ENV=="dev" else True,         
       }
    response.set_cookie(
-      key="access_token",
+      key="k8s_token",
       value=access_token,
       **cookie_params
    )   
