@@ -1,60 +1,84 @@
-0. Introduction
-   -  MiniMath – a chatbot leveraging LangGraph for graph-based AI orchestration and Google Vertex AI for language model inference, allowing natural language queries and dynamic computation in real time.
+# PizzaNow – Full-Stack Microservices Application
 
-1. Key Features:
+## 0. Introduction
+PizzaNow is a full-stack, cloud-native pizza ordering platform demonstrating **microservices architecture**, **containerization**, and **Kubernetes orchestration**. The backend is modular, with **4 separate services**, allowing independent scaling, deployment, and maintenance. This project represents a major milestone in my IT journey, highlighting modern DevOps practices and cloud deployment patterns.  
 
-- Real-time math computations in natural language: "multiply 2 to 5 then add 90" → 100.
-- Maintains session state via in-memory memory for multi-turn conversations.
-- Modular LangGraph flow: assistant node + tool node, easily extendable.
-- Fully deployable on cloud platforms (GCP Cloud Run, Vercel for frontend).
+---
 
-2. Tech Stack  
+## 1. Key Features
 
-   | Category   | Technology                               |
-   |----------- |------------------------------------------|
-   | Frontend   | React + Vite + Tailwind                  |
-   | Backend    | FastAPI, LangGraph, Python               |
-   | AI         | Google Vertex AI (Gemini 2.5 Flash)      |
-   | Deployment | Vercel, GCP Cloud Run (Docker)           |
+- **Microservices architecture**: Each backend service runs independently, communicating over a private network.  
+- **Containerized backend**: All services run in Docker containers, ensuring environment parity and easy deployment.  
+- **Kubernetes practice**: The backend can be deployed to a **K8s cluster** for auto-scaling, self-healing, and production-grade orchestration.  
+- **RESTful API for frontend consumption**: FE hosted on Vercel interacts with the backend via API endpoints.  
+- **Persistence & caching**: Postgres for structured data, Redis for caching and task queues.  
+- **Real-time order management**: Orders are captured, processed, and updated across microservices.  
 
-3. Demo: [minimathdemo](https://youtu.be/ztxgofuGzjk)
+---
 
-4. Getting Started:
-   
-   **Frontend**
+## 2. Tech Stack  
+
+| Category       | Technology                                |
+|--------------- |-------------------------------------------|
+| Frontend       | React + Vite + Tailwind                   |
+| Backend        | FastAPI, Python, Microservices, LangGraph |
+| Database       | PostgreSQL                                |
+| AI             | Google Vertex AI (Gemini 2.5 Flash)       |
+| Cache/Queue    | Redis                                     |
+| Containerization | Docker                                  |
+| Orchestration  | Kubernetes                                |
+| Deployment     | Vercel (FE), Docker/Droplets (BE) on DO   |
+
+---
+
+## 3. Architecture Overview
+
+- **4 Backend Services**:  
+  1. `auth-service` – Handles REST API requests and business logic.  
+  2. `profile-service` – Processes background tasks, payment capture, notifications.  
+  3. `bot-service` – PostgreSQL database container.  
+  4. `paypal-service` – Redis for caching session data and task queues.  
+
+- **Kubernetes practice**:  
+  - Each service defined as a `Deployment` with a `Service`.  
+  - Supports **horizontal pod scaling**, rolling updates, and auto-recovery.  
+  - Secrets and configuration managed via `ConfigMap` and `Secret`.  
+
+---
+
+## 4. Demo
+
+- [PizzaNow Demo Video](https://youtu.be/__unavail__)
+
+---
+
+## 5. Getting Started
+
+**Frontend**
    ```js
       $ cd frontend
-      $ npm install
-      $ npm run dev
+      frontend $ npm install
+      frontend $ npm run dev
    ```
    **Backend**
-   ```text 
+   ```js 
    backend/ 
-   ├── app/ 
-   ├── ...
-   ├── requirements.txt 
-   └── .gitignore 
+      ├── core/
+      ├── auth/app/requirements.txt 
+      ├── profile_user/app/requirements.txt 
+      ├── bot/app/requirements.txt 
+      ├── paypal/app/requirements.txt   
+      └── .gitignore 
    ```
    ```js
-      1. create a virtual environment (VE) called `v_minimath` and activate it 
-         $ python3 -m venv v_minimath
-         $ source v_minimath/bin/activate
+      For each microservice app, for instance `auth`
+      1. create a virtual environment (VE) called `v_auth` and activate it 
+         $ python3 -m venv v_auth
+         $ source v_auth/bin/activate
       2. install all packages from `requirements.txt` into your VE
-         $ cd backend
-         $ backend$ pip install -r requirements.txt
-      3. run the backend
-         $ uvicorn app.main:app --reload
+         $ cd backend/auth
+         $ auth$ pip install -r requirements.txt
+      3. run `auth` app
+         backend$ uvicorn auth.app.main:app --reload --host 0.0.0.0 --port 8000
    ```
 
-5. To use Google Vertex AI with model `Gemini-2.5-flash` or similar legacy versions from Google, you need:
-   - A Google Cloud Project with Vertex AI API enabled
-   - A Service Account JSON key file with access to Vertex AI
-   - Install the dependency: $ pip install langchain-google-vertexai
-
-6. Other technical notes:    
-   - When creating a service account, at least give it permissions:
-     - roles/run.admin
-     - roles/iam.serviceAccountUser
-     - roles/artifactregistry.writer  
-  
-   - Forget terminal deploys: To avoid the disturbance of configuring Vertex AI and other GCP services, it’s best to push your Docker image to Google Container Registry and deploy from the Cloud Console UI. This will eliminate most of the complexity of getting your app running in the cloud.
