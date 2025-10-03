@@ -34,15 +34,16 @@ PizzaNow is a full-stack, cloud-native pizza ordering platform demonstrating **m
 ## 3. Architecture Overview
 
 - **4 Backend Services**:  
-  1. `auth-service` – Handles REST API requests and business logic.  
-  2. `profile-service` – Processes background tasks, payment capture, notifications.  
-  3. `bot-service` – PostgreSQL database container.  
-  4. `paypal-service` – Redis for caching session data and task queues.  
+  1. `auth-service` – Manages user authentication, including custom login as well as Google and LinkedIn sign-ins  
+  2. `profile-service` – Handles user profile data, including purchase history and account settings  
+  3. `bot-service` – Powers **BenBot**, a chatbot that greets users and answers questions about the PizzaNow store  
+  4. `paypal-service` – Executes background tasks such as PayPal payment processing, order capture, and notifications
 
-- **Kubernetes practice**:  
-  - Each service defined as a `Deployment` with a `Service`.  
-  - Supports **horizontal pod scaling**, rolling updates, and auto-recovery.  
-  - Secrets and configuration managed via `ConfigMap` and `Secret`.  
+
+- **Kubernetes practice (YAML)**:  
+  - Each service defined as a `Deployment` with a `Service`  
+  - Supports **horizontal pod scaling**, rolling updates, and auto-recovery  
+  - Secrets and configuration managed via `ConfigMap` and `Secret`  
 
 ---
 
