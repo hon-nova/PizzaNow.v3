@@ -53,21 +53,19 @@ export function Home(){
          {/* main */}
          <div className="pt-20 border border-2 border-indigo-600">
          {user ? <div>Hi <span className="font-bold text-sky-400">{user.username}</span> </div>: "Welcome to PizzaNow!"}
-
-          {/* {success && <div className="border border-green-600 text-green-600 font-bold text-center w-[500px] mx-auto p-4">Payment successful! 🎉</div>} */}
-          {showModel &&  <div className="fixed inset-0 relative">
-            <div className="relative">
+         
+          {success  &&  <div className="fixed inset-30 w-[500px] text-center h-[60px] mx-auto">
+             {showModel &&  <div className="relative">              
                <div 
-                  className="absolute top-0 right-0 text-green-800 font-bold cursor-pointer"
+                  className="absolute top-0 right-1 text-green-800 font-bold cursor-pointer"
                   onClick={()=>setShowModel(false)}
                      >X
                </div>
 
                {/* success */}
-                {success && <div className="border border-green-600 text-green-600 font-bold text-center w-[500px] mx-auto p-4">Payment successful! 🎉</div>} 
-
-            </div>        
-             
+                <div className="border border-green-600 border-[0.5px] text-green-600 p-4">Payment successful! 🎉</div>
+            </div>        }
+                   
           </div>}
          
             <PizzaStore />
