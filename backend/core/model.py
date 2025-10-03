@@ -8,9 +8,16 @@ from sqlalchemy import (
    Numeric,
    ForeignKey,
    ARRAY,
+   DateTime   
 )
 from sqlalchemy.dialects.postgresql import UUID
 from core import Base
+import datetime
+import uuid
+from sqlalchemy.orm import relationship
+from datetime import datetime, timezone
+from enum import Enum as PyEnum
+
 class User(Base):
    __tablename__="users"   
    
@@ -36,24 +43,7 @@ class Pizza(Base):
    ingredients = Column(ARRAY(String),nullable=False)
    pizza_type =  Column(String, nullable=False)
    
-import datetime
-import uuid
 
-from sqlalchemy import (  
-   Integer,
-   Column,   
-   Numeric,
-   ForeignKey,
-   DateTime,
-   String
-  )
-from sqlalchemy.dialects.postgresql import UUID
-from core import Base
-from sqlalchemy.orm import relationship
-from datetime import datetime, timezone
-
-from enum import Enum as PyEnum
-from sqlalchemy import Column, String
 
 class ShipmentStatus(str, PyEnum):
    pending = "pending"
@@ -68,6 +58,7 @@ class Order(Base):
    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)    
    
    paypal_order_id = Column(String, unique=True, nullable=True)
+   payment_status = Column(String,nullable=False,default="PENDING")
 
    discount = Column(Numeric(10, 2), default=0)
    shipping_fee = Column(Numeric(10, 2), default=0)
@@ -75,7 +66,7 @@ class Order(Base):
    total = Column(Numeric(10, 2), nullable=False)
       
    transaction_date = Column(DateTime(timezone=True),default=lambda: datetime.now(timezone.utc))     
-   shipment_status = Column(String, default=ShipmentStatus.pending.value)
+   shipment_status = Column(String, default=ShipmentStatus.pending.value)   
   
    # relationship to order items
    items = relationship("OrderItem", back_populates="order")

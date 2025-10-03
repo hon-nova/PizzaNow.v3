@@ -29,7 +29,8 @@ def save_to_neon(order: OrderCreateRequest, db: Session) -> Order:
    try:      
       new_order = Order(
          user_id=UUIDType(order.user_id),
-         paypal_order_id=order.paypal_order_id,        
+         paypal_order_id=order.paypal_order_id,   
+         payment_status = order.payment_status,             
          discount=_quantize_money(order.discount),
          shipping_fee=_quantize_money(order.shipping_fee),
          taxes=_quantize_money(order.taxes),

@@ -18,11 +18,12 @@ from fastapi import Depends, Body
 paypal_router = APIRouter(prefix="/api/paypal", tags=["paypal"])
 
 PAYPAL_BASE="https://api-m.sandbox.paypal.com"
-PAYPAL_CLIENT_ID=settings. PAYPAL_CLIENT_ID
+PAYPAL_CLIENT_ID=settings.PAYPAL_CLIENT_ID
 PAYPAL_CLIENT_SECRET=settings.PAYPAL_CLIENT_SECRET
 PAYPAL_OAUTH2_TOKEN_URL=settings.PAYPAL_OAUTH2_TOKEN_URL
 PAYPAL_CHECKOUT_ORDERS_URL=settings.PAYPAL_CHECKOUT_ORDERS_URL
-PAYPAL_DOMAINS= settings.PAYPAL_DOMAINS
+PAYPAL_DOMAINS_BE= settings.PAYPAL_DOMAINS_BE
+PAYPAL_DOMAINS_FE= settings.PAYPAL_DOMAINS_FE
 
 param = {
    "paypal_client_id":PAYPAL_CLIENT_ID,
@@ -42,14 +43,13 @@ def get_access_token():
       resp.raise_for_status()     
       return resp.json()['access_token']
    except requests.RequestException as e:
-      raise HTTPException(status_code=500, detail=str(e))  
-   
-from decimal import Decimal
+      raise HTTPException(status_code=500, detail=str(e))    
 
 from decimal import Decimal, ROUND_HALF_UP
 @paypal_router.post("/orders")
 def create_order(data: OrderRequest):
    token = get_access_token()
+   print("IMPORTANT: access_token: {token}")
    try:
       Decimal(str(data.amount)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
    except Exception as e:
@@ -61,8 +61,9 @@ def create_order(data: OrderRequest):
          {"amount": {"currency_code": "CAD", "value": str(amount)}}
       ],
       "application_context": {
-         "return_url": f"{PAYPAL_DOMAINS}/paypalReturnHome",
-         "cancel_url": f"{PAYPAL_DOMAINS}/paypalCancel",
+         
+         "return_url": PAYPAL_DOMAINS_FE,
+         "cancel_url":PAYPAL_DOMAINS_FE,
       },
    }
    resp = requests.post(
@@ -75,15 +76,45 @@ def create_order(data: OrderRequest):
    if resp.status_code >= 300:
       raise HTTPException(resp.status_code, resp.text)
   
-#   this is the correct return, dont change it
    created_order_return = resp.json()  
-   return created_order_return["id"]
+   order_id = created_order_return["id"]
+   created_order_return["application_context"] = {
+         
+         "return_url": PAYPAL_DOMAINS_FE + "/products?success={order_id}",
+         "cancel_url":PAYPAL_DOMAINS_FE + "/user/cart?error=cancelled",
+      },
+   
+   return order_id
 
 @paypal_router.post("/orders/{order_id}/capture")
-def capture_and_save_order(order_id:str,payload:dict = Body(...),db:Session= Depends(get_db)):
-   
+def capture_and_save(order_id:str,payload:dict = Body(...),db:Session=Depends(get_db)):     
    token = get_access_token()
    logging.info(f"order_id: {order_id}")
+   
+   status = capture_status(order_id,token) 
+
+   # 3. Build OrderCreateRequest manually
+   order_data = {
+      "user_id": payload["user_id"],
+      "paypal_order_id": order_id,
+      "payment_status":payload.get("payment_status","PENDING"),
+      "discount": payload.get("discount", 0),
+      "shipping_fee": payload.get("shipping_fee", 0),
+      "taxes": payload.get("taxes", 0),
+      "total": payload.get("total", 0),
+      "items": payload["cart_items"],  # MUST exist        
+   }
+   
+   order_req = OrderCreateRequest(**order_data)  
+   order_req.payment_status = status  
+   save_to_neon(order_req,db)  
+   
+   return status  
+      
+   # return  RedirectResponse(url=f"{PAYPAL_DOMAINS_BE}/api/paypal/success")   
+
+
+def capture_status(order_id:str,token:str):       
    resp = requests.post(
       f"{PAYPAL_BASE}/v2/checkout/orders/{order_id}/capture",    
       headers={
@@ -95,47 +126,40 @@ def capture_and_save_order(order_id:str,payload:dict = Body(...),db:Session= Dep
       )   
    if resp.status_code >= 300:
       raise HTTPException(resp.status_code, resp.text)
-   
+
    paypal_resp = resp.json() 
    
-   # 3. Build OrderCreateRequest manually
-   order_data = {
-        "user_id": payload["user_id"],
-        "paypal_order_id": order_id,
-        "discount": payload.get("discount", 0),
-        "shipping_fee": payload.get("shipping_fee", 0),
-        "taxes": payload.get("taxes", 0),
-        "total": payload.get("total", 0),
-        "items": payload["cart_items"],  # MUST exist
-        "transaction_date": datetime.utcnow(),
-    }
+   return paypal_resp["status"]
    
-   order_req = OrderCreateRequest(**order_data)  
+from fastapi.responses import RedirectResponse
 
-   if paypal_resp["status"] == "COMPLETED":
-      saved_order = save_to_neon(order_req, db)
-      
-      """
-      logging.info(f"TEST ONLY @paypal_router")    
+from core.session import SessionLocal
+from core.model import Order
 
-      saved = db.query(Order).filter(Order.paypal_order_id == order_id).first()  
-      order_out = OrderOut.from_orm(saved)      
+@paypal_router.get("/success")
+def payment_success(order_id: str = None,db: Session = Depends(get_db)):   
+   token = get_access_token()
+   print(f"token @success: {order_id}")
+   if not order_id:
+      return {"error": "No PayPal order id provided"}
+   
+   # Capture the payment
+   saved_order = db.query(Order).filter(Order.paypal_order_id == order_id).first()
+   status = capture_status(saved_order.paypal_order_id,token) 
+   
+   # PAYPAL confirms the order's payment_status
+   saved_order.payment_status = status
+   db.commit()
+   print(f"TEST captured_order_id: {saved_order.id}, status: {status}")
+   
+   return RedirectResponse(url=f"{PAYPAL_DOMAINS_FE}/products?success={status}")  
+            
 
-      logging.info(json.dumps(order_out.model_dump(), default=str,indent=2))
-      # OR logging.info(order_out.model_dump_json(indent=2))
-       logging.info(f" DURING STATUS COMPLETED ...")      """     
-      
-      return  {
-         "status":  paypal_resp["status"],
-         "order_id": saved_order.id,
-         "paypal_order_id": order_id
-         }           
-        
-   else:
-      raise HTTPException(400, "Payment not completed")   
-
-
-
+# @paypal_router.get("/cancel")
+# def paypal_cancel():
+#    """Handle failed/canceled payment from PayPal."""
+  
+#    return RedirectResponse(url=f"{PAYPAL_DOMAINS_FE}/user/cart?error=Transaction%20Cancelled%21")
 
 
 @paypal_router.get("/auth",response_model=LoginFilter)
@@ -172,5 +196,15 @@ def get_me(user: User = Depends(get_current_user)):
         }
     ]
 }"""
+
+"""
+logging.info(f"TEST ONLY @paypal_router")    
+
+saved = db.query(Order).filter(Order.paypal_order_id == order_id).first()  
+order_out = OrderOut.from_orm(saved)      
+
+logging.info(json.dumps(order_out.model_dump(), default=str,indent=2))
+# OR logging.info(order_out.model_dump_json(indent=2))
+   logging.info(f" DURING STATUS COMPLETED ...")      """     
 
 

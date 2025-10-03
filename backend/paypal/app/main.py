@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
 from core.session import Base, engine 
-from paypal.app.routes import paypal_router
+from paypal.app.routes import paypal_router, webhook_router
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -24,6 +24,7 @@ app.add_middleware(
     
 # app.include_router(test_router, prefix="/test") 
 app.include_router(paypal_router)   
+app.include_router(webhook_router)   
 
 # logging.info(f"DATABASE_URL CURRENTLY: {settings.DATABASE_URL}")
 # logger.info("@main Routers: %s", app.routes)

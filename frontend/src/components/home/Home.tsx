@@ -1,20 +1,32 @@
 import { Footer } from "./Footer"
 import { Nav } from "../home/Nav"
 import { useUserStore } from "../stores/userStore"
+import { useCartStore } from "../stores/cartStore"
 import { useEffect } from "react"
-
-
 import { PizzaStore } from "../pizza/PizzaStore"
 import { BenBotChat } from "../bot/BenBotChat"
-
+import { useSearchParams } from "react-router-dom"
+import { useState } from "react"
 
 export function Home(){
    const { user, setUser  } = useUserStore()
+   const { clearCart } = useCartStore()
+   console.log(`clearCart: ${clearCart}`)
+
    console.log(`logged-in user: `, user )
-  
+   const [searchParams] = useSearchParams()
+   const [showModel, setShowModel ] = useState(true)
+       
+   // const success = searchParams.get("success");  
+   const success = searchParams.get("success");
    const BASE_URL = import.meta.env.VITE_BOT_BACKEND_URL
+
    
-   console.log(`Initial BASE_URL: ${BASE_URL}`)   
+   console.log(`success: ${success}`) 
+   // if (success) {
+   //    clearCart()
+   // }
+
    useEffect(()=>{
       async function getUser(){
          const res = await fetch(`${BASE_URL}/api/pizzas/auth`,{
@@ -41,6 +53,23 @@ export function Home(){
          {/* main */}
          <div className="pt-20 border border-2 border-indigo-600">
          {user ? <div>Hi <span className="font-bold text-sky-400">{user.username}</span> </div>: "Welcome to PizzaNow!"}
+
+          {/* {success && <div className="border border-green-600 text-green-600 font-bold text-center w-[500px] mx-auto p-4">Payment successful! 🎉</div>} */}
+          {showModel &&  <div className="fixed inset-0 relative">
+            <div className="relative">
+               <div 
+                  className="absolute top-0 right-0 text-green-800 font-bold cursor-pointer"
+                  onClick={()=>setShowModel(false)}
+                     >X
+               </div>
+
+               {/* success */}
+                {success && <div className="border border-green-600 text-green-600 font-bold text-center w-[500px] mx-auto p-4">Payment successful! 🎉</div>} 
+
+            </div>        
+             
+          </div>}
+         
             <PizzaStore />
             <BenBotChat/>            
          </div>

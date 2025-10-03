@@ -3,21 +3,27 @@ import { useUserStore } from "../stores/userStore"
 import { useCartStore } from "../stores/cartStore"
 import { useEffect } from "react"
 import { CartNav } from "./CartNav"
+import { useSearchParams } from "react-router-dom"
 
-export function Cart(){
-   // const { user } = useUserStore()   
+export function Cart(){  
 
    const { user, setUser  } = useUserStore()
    const { cart, setUserId, updateCartItem, removeFromCart} = useCartStore()
    const userId = user?.id
    const cartItems = cart?.cartItems
+    const [searchParams] = useSearchParams()
+       
+   // const success = searchParams.get("success");  
+   const error = searchParams.get("error");  
+   // console.log(`BE success: ${success}`)
+   console.log(`BE error: ${error}`)
+ 
    console.log(`logged-in user: `, user )
   
    const BASE_URL = import.meta.env.VITE_PAYPAL_BACKEND_URL
    
    console.log(`Initial BASE_URL: ${BASE_URL}`) 
-   // console.log(`current user id: ${userId}`)
-   // console.log(`cartItems: ${JSON.stringify(cartItems)}`)
+   
    useEffect(()=>{
       async function getUser(){
          const res = await fetch(`${BASE_URL}/api/paypal/auth`,{
@@ -54,7 +60,8 @@ export function Cart(){
    return (
       <div>
          <CartNav /> 
-         <div className="grid grid-cols-12 gap-1 py-2 h-screen mt-22">       
+         <div className="grid grid-cols-12 gap-1 py-2 h-screen mt-22">    
+            {error && <div className="bg-red-500 text-white p-2">Payment Cancelled!</div>}
             <div className="col-span-8 bg-amber-100">
                <p>Hello <span className="font-bold text-sky-400">{user?.username}</span>. Your cart: {cart?.totalItem} items</p>
                {cartItems.map((pizzaItem)=>(

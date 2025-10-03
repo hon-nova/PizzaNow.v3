@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useUserStore } from "../stores/userStore"
 import { useCartStore } from "../stores/cartStore"
+import { useNavigate } from "react-router-dom"
 
 function Message({ content }:{content:string}) {
   if (!content) return null
@@ -11,8 +12,10 @@ function Message({ content }:{content:string}) {
 export function PayPal() {
    const { user, setUser } = useUserStore()
    const userId = user?.id
+   const navigate = useNavigate()
+   
    console.log(`paypal user: ${user?.username}`)
-   const { cart, setUserId } = useCartStore()
+   const { cart, setUserId, clearCart } = useCartStore()
    const BASE_PAYPAL_URL = import.meta.env.VITE_PAYPAL_BACKEND_URL
    const cartItems = cart?.cartItems || []
 
@@ -120,33 +123,48 @@ export function PayPal() {
                const orderId = await res.text()
                console.log(`PayPal orderID: ${orderId}`)
                return orderId.replace(/"/g, "")
-              }}
-              onApprove={async (data) => {
-               console.log(`IMPORTANT original PAYPAL onApprove() data: ${data}`)
-                const res = await fetch(
-                  `${BASE_PAYPAL_URL}/api/paypal/orders/${data.orderID}/capture`,
-                  { 
-                     method: "POST", 
-                     headers: { "Content-Type": "application/json" },
-                     body: JSON.stringify({
-                        user_id: user?.id,
-                     cart_items: cart.cartItems.map(item => ({
-                        pizza_id: item.pizza.id,
-                        quantity: item.quantity,
-                        sub_amount: item.subAmount,
-                     })),
-                     discount: cart.discount,
-                     shipping_fee: cart.shippingFee,
-                     taxes: cart.taxes,
-                     total: cart.total,
-                     paypal_order_id: data.orderID
-                     }) }
-                )
-               const captureData = await res.json()
-               console.log(`captureData from BE: ${captureData.status}`)
-               console.log(`order_id BE: ${captureData.order_id}`)    
-               setMessage(`Transaction completed!`);
-              }}
+               }}
+               onApprove={async (data) => {
+                  console.log(`IMPORTANT original PAYPAL onApprove() data: ${data}`)
+                  console.log(`${BASE_PAYPAL_URL}/api/paypal/orders/${data.orderID}/capture`);
+
+                  const res = await fetch(
+                     `${BASE_PAYPAL_URL}/api/paypal/orders/${data.orderID}/capture`,
+                     { 
+                        method: "POST", 
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                           user_id: user?.id,
+                        cart_items: cart.cartItems.map(item => ({
+                           pizza_id: item.pizza.id,
+                           quantity: item.quantity,
+                           sub_amount: item.subAmount,
+                        })),
+                        discount: cart.discount,
+                        shipping_fee: cart.shippingFee,
+                        taxes: cart.taxes,
+                        total: cart.total,
+                        paypal_order_id: data.orderID
+                        }) }
+                  )
+                  const captureData = await res.json()
+                  console.log(`captureData from BE: ${captureData}`)
+                    
+                  setMessage(`Transaction completed! Status: ${captureData}`);
+                  clearCart()   
+                  setTimeout(()=>{
+                     navigate(`/products?success=${captureData}`);
+                  },2000)
+                 
+
+               }}
+               onCancel={() => {
+                  setMessage("Transaction canceled");
+               }}
+               onError={(err) => {
+                  console.error(err);
+                  setMessage("Transaction failed due to error");
+               }}
             />
           </PayPalScriptProvider>
          <div className="text-green-600 font-bold">

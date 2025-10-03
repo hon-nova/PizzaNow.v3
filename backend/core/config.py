@@ -44,7 +44,8 @@ class Settings(BaseSettings):
    PAYPAL_DOMAINS: str=""
    PAYPAL_OAUTH2_TOKEN_URL: str=""
    PAYPAL_CHECKOUT_ORDERS_URL: str=""  
-   
+   PAYPAL_DOMAINS_BE: str=""
+   PAYPAL_DOMAINS_FE: str=""   
    
    class Config:          
       env_file = Path(__file__).parent / ".env"      

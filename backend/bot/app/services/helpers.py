@@ -77,8 +77,9 @@ from core.session import SessionLocal
 def respond_shipment_status(input: str) -> str:
    with SessionLocal() as session:
       input = input.strip()
-      order = session.get(Order, input)
-      print(f"IMPORTANT order with order_id: {input}: {order.id}")
+      # order = session.get(Order, input)
+      order = session.query(Order).filter(Order.id == input).first()
+      # print(f"IMPORTANT order with order_id: {input}: {order.id}")
       if not order:
          return f"No order found with ID {input}."
       
@@ -86,7 +87,7 @@ def respond_shipment_status(input: str) -> str:
       
       base_msg = f"Order {input} has shipment status: {status}."
       if status == "succeeded":
-         return f"{base_msg} Congrats!"
+         return f"{base_msg} Congrats 🎉🎉🎉🎉🎉!"
       if status in ("pending", "failed"):
          return f"{base_msg}  I will notify the admin perosn right now. They will contact you shortly regarding your order. Thank you for contacting us!"
       return base_msg
