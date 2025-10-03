@@ -24,10 +24,9 @@ PizzaNow is a full-stack, cloud-native pizza ordering platform demonstrating **m
 | Backend        | FastAPI, Python, Microservices, LangGraph |
 | Database       | PostgreSQL                                |
 | AI             | Google Vertex AI (Gemini 2.5 Flash)       |
-| Cache/Queue    | Redis                                     |
 | Containerization | Docker                                  |
 | Orchestration  | Kubernetes                                |
-| Deployment     | Vercel (FE), Docker/Droplets (BE) on DO   |
+| Deployment     | Vercel (FE), DO Docker/Droplets (BE)      |
 
 ---
 
