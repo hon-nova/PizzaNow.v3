@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paypal-deployment
+  namespace: pizzanow
+spec:
+   replicas: 1
+   selector:
+      matchLabels:
+         app: paypal-service
+   template:
+      metadata:   
+         labels:
+            app: paypal-service
+      spec:
+         containers:
+         -  name: paypal-docker-container
+            image: hondocker23/paypal-service:2025-10-08-1626
+            ports:
+            - containerPort: 2025
+            envFrom:
+            - configMapRef:
+                name: pizzanow-config
+            volumeMounts:
+              - name: secret-volume
+                mountPath: /etc/config
+                readOnly: true
+
+         volumes:
+           - name: secret-volume
+             secret:
+               secretName: pizzanow-secret      
+                

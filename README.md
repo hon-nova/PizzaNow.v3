@@ -60,7 +60,7 @@ PizzaNow is a full-stack, cloud-native pizza ordering platform demonstrating **m
       frontend $ npm install
       frontend $ npm run dev
    ```
-   **Backend**
+**Backend**
    ```js 
    backend/ 
       ├── core/

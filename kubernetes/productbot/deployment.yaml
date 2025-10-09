@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bot-deployment
+  namespace: pizzanow
+spec:
+   replicas: 1
+   selector:
+      matchLabels:
+         app: bot-service
+   template:
+      metadata:   
+         labels:
+            app: bot-service
+      spec:
+         containers:
+         -  name: bot-docker-container
+            image: hondocker23/bot-service:2025-10-08-1621
+            ports:
+            - containerPort: 2025
+            envFrom:
+            - configMapRef:
+                name: pizzanow-config
+            volumeMounts:
+              - name: secret-volume
+                mountPath: /etc/config
+                readOnly: true
+
+         volumes:
+           - name: secret-volume
+             secret:
+               secretName: pizzanow-secret      
+                

@@ -5,6 +5,8 @@ from pathlib import Path
 ENV = os.getenv("ENV", "DEV").upper() 
 env_file = ".env" if ENV == "DEV" else ".env.prod"
 
+SECRET_DIR = Path("/etc/config")
+
 class Settings(BaseSettings):  
    
    ENV: str = ENV
@@ -49,6 +51,13 @@ class Settings(BaseSettings):
    
    class Config:          
       env_file = Path(__file__).parent / ".env"      
-      extra = "forbid" 
+      extra = "ignore" 
+   
+   def load_secrets(self):
+      if SECRET_DIR.exists():
+         for f in SECRET_DIR.iterdir():
+            if f.is_file():
+               os.environ[f.name] = f.read_text().strip()
 
 settings = Settings() # pyright: ignore[reportCallIssue]
+settings.load_secrets()
