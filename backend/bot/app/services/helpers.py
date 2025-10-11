@@ -1,15 +1,16 @@
 from pathlib import Path
-import vertexai
+# import vertexai
 from langchain_community.vectorstores import InMemoryVectorStore
 from langchain.chains import RetrievalQA
 from google.cloud import aiplatform
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_vertexai import VertexAIEmbeddings, ChatVertexAI
 
-from sqlalchemy.orm import Session
+
 from core.model import Order 
 
-vertexai.init(project="pizzanowai", location="us-central1")
+# vertexai.init(project="pizzanowai", location="us-central1")
+
 aiplatform.init(
    project="pizzanowai",
    location="us-central1"

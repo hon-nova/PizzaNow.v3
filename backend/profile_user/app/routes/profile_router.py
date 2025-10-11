@@ -4,7 +4,7 @@ from core.auth import get_current_user
 from core.model import User
 from core.schema import LoginFilter
 
-profile_router = APIRouter(prefix="/api/auth", tags=["auth"])
+profile_router = APIRouter(prefix="/api/profile", tags=["auth"])
 import logging
 logger = logging.getLogger("uvicorn.error") 
 

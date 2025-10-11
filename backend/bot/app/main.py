@@ -30,8 +30,8 @@ app.include_router(graph_router)
 
 # if settings.ENV.upper()=="DEV":
 #    Base.metadata.create_all(bind=engine)
-print(f"RESPOND_SHIPMENT_STATUS")
-print(respond_shipment_status("591c1973-8e02-4a29-a30c-905fe720ab58"))
+# print(f"RESPOND_SHIPMENT_STATUS")
+# print(respond_shipment_status("591c1973-8e02-4a29-a30c-905fe720ab58"))
 
 @app.get("/bot-ping")
 def ping():

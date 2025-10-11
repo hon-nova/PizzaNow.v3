@@ -7,7 +7,6 @@ spec:
    selector:
       app: profile-service
    ports:
-   - port: 4016
+   - port: 4018
      targetPort: 2025
-     nodePort: 30001
-   type: NodePort
+   type: ClusterIP

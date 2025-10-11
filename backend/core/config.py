@@ -1,15 +1,20 @@
 from pydantic_settings import BaseSettings
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
-ENV = os.getenv("ENV", "DEV").upper() 
-env_file = ".env" if ENV == "DEV" else ".env.prod"
+SECRET_FILE = Path("/etc/config/.env.secret")
+LOCAL_ENV_FILE = Path(__file__).parent / ".env"
 
-SECRET_DIR = Path("/etc/config")
+if SECRET_FILE.exists():
+    load_dotenv(dotenv_path=SECRET_FILE, override=True)
+
+else:
+   load_dotenv(dotenv_path=LOCAL_ENV_FILE, override=True)
 
 class Settings(BaseSettings):  
    
-   ENV: str = ENV
+   ENV: str = "DEV"
    VERTEX_REGION: str = "us-central1"  
    PROJECT_ID: str = "dummy-project"
    ALLOWED_ORIGINS: str = "*"
@@ -49,15 +54,21 @@ class Settings(BaseSettings):
    PAYPAL_DOMAINS_BE: str=""
    PAYPAL_DOMAINS_FE: str=""   
    
-   class Config:          
-      env_file = Path(__file__).parent / ".env"      
-      extra = "ignore" 
-   
-   def load_secrets(self):
-      if SECRET_DIR.exists():
-         for f in SECRET_DIR.iterdir():
-            if f.is_file():
-               os.environ[f.name] = f.read_text().strip()
+   class Config:     
+      extra = "ignore"   
 
 settings = Settings() # pyright: ignore[reportCallIssue]
-settings.load_secrets()
+print("test os.getenv DATABASE_URL")
+print(os.getenv("DATABASE_URL")) 
+
+
+# settings.load_secrets()
+   # def load_secrets(self):
+   #    if SECRET_DIR.exists():
+   #       for f in SECRET_DIR.iterdir():
+   #          if f.is_file():
+   #             # If file is a key=value env file
+   #             for line in f.read_text().splitlines():
+   #                if "=" in line:
+   #                   k, v = line.split("=", 1)
+   #                   os.environ[k] = v.strip()

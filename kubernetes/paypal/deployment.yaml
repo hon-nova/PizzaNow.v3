@@ -15,7 +15,7 @@ spec:
       spec:
          containers:
          -  name: paypal-docker-container
-            image: hondocker23/paypal-service:2025-10-08-1626
+            image: hondocker23/paypal-service:2025-10-10-2237
             ports:
             - containerPort: 2025
             envFrom:

@@ -2,11 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
    name: fe-endpoint
+   namespace: pizzanow
 spec:
    selector:
       app: fe-service   
-   type: NodePort
+   type: ClusterIP
    ports:
-   - port: 21344
-     targetPort: 4444
-     nodePort: 30080
+   - port: 80
+     targetPort: 80
+     

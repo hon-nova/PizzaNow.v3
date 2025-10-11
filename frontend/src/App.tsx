@@ -14,8 +14,7 @@ export default function App() {
       <Router>
          <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            {/* <Route path="/query" element={<Query />} /> */}
+            <Route path="/register" element={<Register />} />           
             <Route path="/products" element={<Home />} />
             <Route path="/api/privacy-policy" element={<Policy />} />           
             <Route path="/user/cart" element={<Cart />} />           

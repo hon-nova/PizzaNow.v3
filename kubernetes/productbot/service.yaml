@@ -7,7 +7,6 @@ spec:
    selector:
       app: bot-service
    ports:
-   - port: 4016
-     targetPort: 2025
-     nodePort: 30002
-   type: NodePort
+   - port: 4017
+     targetPort: 2025     
+   type: ClusterIP

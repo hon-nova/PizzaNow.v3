@@ -15,7 +15,7 @@ spec:
       spec:
          containers:
          -  name: profile-docker-container
-            image: hondocker23/profile-service:2025-10-08-1511
+            image: hondocker23/profile-service:2025-10-10-2229
             ports:
             - containerPort: 2025
             envFrom:

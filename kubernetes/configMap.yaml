@@ -1,9 +1,9 @@
 apiVersion: v1
 data:
-  .env.config: "ENV=DEV\nVERTEX_REGION=us-central1\nALLOWED_ORIGINS=http://localhost:5173,http://localhost:4173,https://pizzanow-v3.vercel.app/\nALGORITHM=HS256\nACCESS_TOKEN_EXPIRE_MINUTES=43200\nGOOGLE_SCOPE=\"email
-    profile openid\"\nGOOGLE_RESPONSE_TYPE=code\nGOOGLE_TOKEN_ENDPOINT=https://oauth2.googleapis.com/token\nGOOGLE_REDIRECT_URI=http://localhost:8000/api/auth/google/callback\nGOOGLE_REDIRECT_URI_FE=http://localhost:5173/products,http://localhost:4173/products,https://pizzanow-v3.vercel.app/\nL_TOKEN_URL=https://www.linkedin.com/oauth/v2/accessToken\nL_USER_URL=https://api.linkedin.com/v2/userinfo\nL_SCOPE=\"openid
-    profile email\"\nL_RESPONSE_TYPE=code\nL_STATE=I58HgiHrZZwWphR8Lg0wlLdyOHt9xnEoAnaE0Fo4fc\nL_REDIRECT_URI=http://localhost:8000/api/auth/linkedin/callback
-    \nL_REDIRECT_URI_FE=http://localhost:5173/products,http://localhost:4173/products,https://pizzanow-v3.vercel.app/\n\n\n"
+  .env.config: "ENV=DEV\nVERTEX_REGION=us-central1\nALLOWED_ORIGINS=http://pizzanow.local.com,https://pizzanow-v3.vercel.app/\nALGORITHM=HS256\nACCESS_TOKEN_EXPIRE_MINUTES=43200\nGOOGLE_SCOPE=\"email
+    profile openid\"\nGOOGLE_RESPONSE_TYPE=code\nGOOGLE_TOKEN_ENDPOINT=https://oauth2.googleapis.com/token\nGOOGLE_REDIRECT_URI=http://auth-endpoint:4016/api/auth/google/callback\nGOOGLE_REDIRECT_URI_FE=http://pizzanow.local.com/products,https://pizzanow-v3.vercel.app/products\nL_TOKEN_URL=https://www.linkedin.com/oauth/v2/accessToken\nL_USER_URL=https://api.linkedin.com/v2/userinfo\nL_SCOPE=\"openid
+    profile email\"\nL_RESPONSE_TYPE=code\nL_STATE=I58HgiHrZZwWphR8Lg0wlLdyOHt9xnEoAnaE0Fo4fc\nL_REDIRECT_URI=http://auth-endpoint:4016/api/auth/linkedin/callback
+    \nL_REDIRECT_URI_FE=http://pizzanow.local.com/products,https://pizzanow-v3.vercel.app/products\n\n\n"
 kind: ConfigMap
 metadata:
   creationTimestamp: null

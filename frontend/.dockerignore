@@ -1,0 +1,25 @@
+# dependencies
+node_modules
+dist
+*.log
+
+# build artifacts
+*.local
+*.cache
+*.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# env files
+.env
+.env.preview
+
+# git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea

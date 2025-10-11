@@ -4,12 +4,13 @@ WORKDIR /app
 
 COPY bot/requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     procps \
+    build-essential \
  && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY core ./core
 

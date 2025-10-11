@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fe-deployment
+  namespace: pizzanow
+spec:
+   replicas: 1
+   selector:
+      matchLabels:
+         app: fe-service
+   template:
+      metadata:   
+         labels:
+            app: fe-service
+      spec:
+         containers:
+         - name: fe-docker-container
+           image: hondocker23/fe-service:2025-10-10-2332
+           ports:
+           - containerPort: 80
+           env:
+           - name: ENV
+             value: DEV
+           - name: VITE_AUTH_BACKEND_URL
+             value: "http://auth-endpoint:4016"
+           - name: VITE_PROFILE_BACKEND_URL
+             value: "http://profile-endpoint:4018"
+           - name: VITE_BOT_BACKEND_URL
+             value: "http://bot-endpoint:4017"
+           - name: VITE_PAYPAL_BACKEND_URL
+             value: "http://paypal-endpoint:4019"                   
+           - name: VITE_PAYPAL_CLIENT_ID
+             valueFrom:
+               secretKeyRef:
+                 name: pizzanow-secret
+                 key: .env.paypalid          
+           
+   

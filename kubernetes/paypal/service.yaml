@@ -7,7 +7,6 @@ spec:
    selector:
       app: paypal-service
    ports:
-   - port: 4016
-     targetPort: 2025
-     nodePort: 30003
-   type: NodePort
+   - port: 4019
+     targetPort: 2025     
+   type: ClusterIP

@@ -15,17 +15,16 @@ spec:
       spec:
          containers:
          -  name: auth-docker-container
-            image: hondocker23/auth-service:2025-10-08-1508
+            image: hondocker23/auth-service:2025-10-10-2039
             ports:
             - containerPort: 2025
             envFrom:
             - configMapRef:
-                name: pizzanow-config
+                name: pizzanow-config           
             volumeMounts:
               - name: secret-volume
                 mountPath: /etc/config
                 readOnly: true
-
          volumes:
            - name: secret-volume
              secret:
