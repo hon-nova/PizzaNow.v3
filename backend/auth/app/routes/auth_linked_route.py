@@ -116,15 +116,29 @@ def linkedin_callback(request: Request, db: Session = Depends(get_db)):
    logger.warning("IMPORTANT:: L_REDIRECT_URI_FE: ",l_redirect_url_fe) 
    response = RedirectResponse(url=l_redirect_url_fe)
   
-   cookie_params = {
+   # cookie_params = {
+   #       "httponly": True,
+   #       "max_age":settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+   #       "samesite":"none",
+   #       "secure": False if settings.ENV=="dev" else True,         
+   #    }
+   if settings.ENV.upper() == "DEV":         
+      cookie_params = {
          "httponly": True,
-         "max_age":settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-         "samesite":"lax" if settings.ENV=="dev" else "none",
-         "secure": False if settings.ENV=="dev" else True,         
-      }
+         "samesite": "none",
+         "secure": False,
+         "max_age": 60*60*24*30 }
+   else:         
+      cookie_params = {
+         "httponly": True,
+         "samesite": "none",
+         "secure": True,
+         "max_age": 60*60*24*30 }
+      
    response.set_cookie(
       key="k8s_token",
       value=access_token,
+      domain=".pizzanow.local.com",
       **cookie_params
    )   
 

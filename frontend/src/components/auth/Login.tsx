@@ -13,8 +13,10 @@ export function Login() {
    const navigate = useNavigate()
 
    const [msg, setMsg] = useState<Msg>({error: '',success:''})
-   // VITE_AUTH_BACKEND_URL
-   const BASE_URL=import.meta.env.VITE_AUTH_BACKEND_URL
+   
+   const BASE_URL ="http://auth.pizzanow.local.com:4016"
+   console.log("AUTH URL:",BASE_URL);
+
    const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault()
       

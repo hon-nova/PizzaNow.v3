@@ -25,7 +25,7 @@ export const BenBotChat = () => {
    console.log(`Initial BASE_URL: ${BASE_URL}`)   
    useEffect(()=>{
          async function getUser(){
-            const res = await fetch(`${BASE_URL}/api/pizzas/auth`,{
+            const res = await fetch(`${BASE_URL}/api/bot/auth`,{
                method:"GET",
                headers:{
                      "Content-Type":"application/json",               
@@ -63,7 +63,7 @@ export const BenBotChat = () => {
          inputRef.current.focus(); // re-focus after send
       }
       try {
-         const res = await axios.post(`${BASE_URL}/api/query`, 
+         const res = await axios.post(`${BASE_URL}/api/bot/query`, 
             { text: input },
             {withCredentials: true,
                headers: {

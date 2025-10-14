@@ -89,17 +89,26 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
       from fastapi.encoders import jsonable_encoder    
       data = jsonable_encoder(data)  
       
-      cookie_params = {
+      if settings.ENV.upper() == "DEV":         
+         cookie_params = {
          "httponly": True,
-         "samesite": "lax" if settings.ENV.upper() == "DEV" else "none",
-         "secure": False if settings.ENV.upper() == "DEV" else True,
+         "samesite": "lax",
+         "secure": False,
          "max_age": 60*60*24*30  
         }
+      else:         
+         cookie_params = {
+         "httponly": True,
+         "samesite": "none",
+         "secure": True,
+         "max_age": 60*60*24*30  
+        }      
       
       response = JSONResponse(content=data)
       response.set_cookie(
             key="k8s_token",
             value=access_token,
+            domain=".pizzanow.local.com",
             **cookie_params
         )
       # print(f"@auth_route login data: {data}")

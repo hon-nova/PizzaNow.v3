@@ -21,7 +21,7 @@ class Query(BaseModel):
    text: str
 
 graph = build_graph()  
-graph_router = APIRouter(prefix="/api",tags=["bot"])
+graph_router = APIRouter(prefix="/api/bot",tags=["bot"])
 
 thread_id =  uuid.uuid4()
 config = {"thread_id": thread_id}

@@ -33,9 +33,9 @@ app.include_router(graph_router)
 # print(f"RESPOND_SHIPMENT_STATUS")
 # print(respond_shipment_status("591c1973-8e02-4a29-a30c-905fe720ab58"))
 
-@app.get("/bot-ping")
+@app.get("/botping")
 def ping():
-   return {"8082": "pong"}
+   return {"botping": "bot-pong"}
    
 if __name__ == "__main__":
    

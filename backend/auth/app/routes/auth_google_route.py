@@ -1,7 +1,7 @@
 import logging
 from fastapi import APIRouter
 from core.config import settings
-import urllib.parse
+from urllib.parse import quote_plus,urlencode
 from starlette.responses import RedirectResponse
 from auth.app.services.google.helpers import save_google_user_to_db
 
@@ -27,13 +27,15 @@ else:
 def google_login():
    params = {
       "client_id": GOOGLE_CLIENT_ID,
-      "redirect_uri": GOOGLE_REDIRECT_URI,
-      "scope": GOOGLE_SCOPE,
+      "redirect_uri": GOOGLE_REDIRECT_URI,   
       "response_type": GOOGLE_RESPONSE_TYPE,
       "access_type": "offline",
       "prompt": "consent",
    }
-   url = "https://accounts.google.com/o/oauth2/auth?" + urllib.parse.urlencode(params)
+
+   scope = quote_plus(GOOGLE_SCOPE, safe=" ")
+   url = "https://accounts.google.com/o/oauth2/auth?" + urlencode(params) + f"&scope={scope}"
+   # url = "https://accounts.google.com/o/oauth2/auth?" + urllib.parse.urlencode(params)
    logger.info("Redirecting to Google OAuth URL: %s", url)
    return RedirectResponse(url=url)
 
@@ -89,16 +91,31 @@ def google_callback(request: Request,db: Session = Depends(get_db)):
       
       response = RedirectResponse(url=google_redirect_uri_fe)
    
-      cookie_params = {
-            "httponly": True,
-            "max_age":settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-            "samesite":"none" if settings.ENV.upper()!="DEV" else "lax",
-            "secure": settings.ENV.upper()!="DEV",         
-         }
+      # cookie_params = {
+      #       "httponly": True,
+      #       "max_age":settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+      #       "samesite":"none",
+      #       "secure": settings.ENV.upper()!="DEV",         
+      #    }
+      if settings.ENV.upper() == "DEV":         
+         cookie_params = {
+         "httponly": True,
+         "samesite": "lax",
+         "secure": False,
+         "max_age": 60*60*24*30  
+        }
+      else:         
+         cookie_params = {
+         "httponly": True,
+         "samesite": "none",
+         "secure": True,
+         "max_age": 60*60*24*30  
+        }      
       
       response.set_cookie(
          key="k8s_token",
          value=access_token,
+         domain=".pizzanow.local.com",
          **cookie_params
       )   
 

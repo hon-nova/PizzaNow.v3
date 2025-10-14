@@ -27,7 +27,7 @@ export const usePizzaStore = create<PizzaState>(
                  
          set({ loading: true, error: null })
          try {           
-            const res = await fetch(`${BASE_URL}/api/pizzas?page=${page}&limit=${limit}`);
+            const res = await fetch(`${BASE_URL}/api/bot/pizzas?page=${page}&limit=${limit}`);
             const data = await res.json();
             set({ 
                pizzas: data.pizzas,

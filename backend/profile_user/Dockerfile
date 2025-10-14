@@ -15,6 +15,9 @@ COPY core ./core
 
 COPY profile_user ./profile_user
 
+# Remove any accidentally copied .env files
+RUN find . -type f -name ".env*" -delete
+
 ENV PORT=2025
 
 CMD ["python", "-m", "profile_user.app.main"]

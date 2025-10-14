@@ -2,56 +2,68 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: pizzanow-ingress
+  namespace: pizzanow
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   ingressClassName: nginx
   rules:
-  - host: fe.pizzanow.local.com
+  - host: pizzanow.local.com
     http:
       paths:
-      - path: /
+      # --- frontend (React) ---
+      - path: /(.*)
         pathType: Prefix
         backend:
           service:
             name: fe-service
             port:
               number: 80
-  - host: auth.pizzanow.local.com
-    http:
-      paths:
-      - path: /api/auth
+      # --- auth-service ---
+      - path: /api/auth(/|$)(.*)
         pathType: Prefix
         backend:
           service:
             name: auth-service
             port:
               number: 4016
-  - host: bot.pizzanow.local.com
-    http:
-      paths:
-      - path: /api/bot
+
+      # --- bot-service ---
+      - path: /api/pizzas(/|$)(.*)
         pathType: Prefix
         backend:
           service:
             name: bot-service
             port:
               number: 4017
-  - host: profile.pizzanow.local.com
-    http:
-      paths:
-      - path: /api/profile
+      - path: /api/query(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: bot-service
+            port:
+              number: 4017
+
+      # --- profile-service ---
+      - path: /api/profile(/|$)(.*)
         pathType: Prefix
         backend:
           service:
             name: profile-service
             port:
               number: 4018
-  - host: paypal.pizzanow.local.com
-    http:
-      paths:
-      - path: /api/paypal
+
+      # --- paypal-service ---
+      - path: /api/paypal(/|$)(.*)
         pathType: Prefix
         backend:
           service:
             name: paypal-service
             port:
               number: 4019
+
+  # Optional TLS block for HTTPS (if you have certs)
+  # tls:
+  # - hosts:
+  #   - pizzanow.local.com
+  #   secretName: pizzanow-tls

@@ -1,5 +1,5 @@
 course01.json
-.env
+
 *.preview
 *.prod
 seed_pizza.py

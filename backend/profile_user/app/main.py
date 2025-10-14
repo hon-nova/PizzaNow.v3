@@ -32,9 +32,9 @@ app.include_router(profile_router)
 # if settings.ENV.upper()=="DEV":
 #    Base.metadata.create_all(bind=engine)
 
-@app.get("/ping")
+@app.get("/profileping")
 def ping():
-   return {"message": "pong"}
+   return {"profileping": "profile-pong"}
    
 if __name__ == "__main__":
    port = int(os.environ.get("PORT", 8081))

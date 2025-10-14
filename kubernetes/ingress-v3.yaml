@@ -2,56 +2,63 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: pizzanow-ingress
+  namespace: pizzanow
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-  - host: fe.pizzanow.local.com
+  - host: pizzanow.local.com
     http:
       paths:
+      # --- frontend ---
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: fe-service
+            name: fe-endpoint
             port:
               number: 80
-  - host: auth.pizzanow.local.com
-    http:
-      paths:
+
+      # --- auth-endpoint ---
       - path: /api/auth
         pathType: Prefix
         backend:
           service:
-            name: auth-service
+            name: auth-endpoint
             port:
               number: 4016
-  - host: bot.pizzanow.local.com
-    http:
-      paths:
-      - path: /api/bot
+
+      # --- bot-endpoint ---
+      - path: /api/pizzas
         pathType: Prefix
         backend:
           service:
-            name: bot-service
+            name: bot-endpoint
             port:
               number: 4017
-  - host: profile.pizzanow.local.com
-    http:
-      paths:
+      - path: /api/query
+        pathType: Prefix
+        backend:
+          service:
+            name: bot-endpoint
+            port:
+              number: 4017
+
+      # --- profile-endpoint ---
       - path: /api/profile
         pathType: Prefix
         backend:
           service:
-            name: profile-service
+            name: profile-endpoint
             port:
               number: 4018
-  - host: paypal.pizzanow.local.com
-    http:
-      paths:
+
+      # --- paypal-endpoint ---
       - path: /api/paypal
         pathType: Prefix
         backend:
           service:
-            name: paypal-service
+            name: paypal-endpoint
             port:
               number: 4019

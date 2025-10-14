@@ -27,16 +27,10 @@ app.include_router(auth_router)
 app.include_router(auth_google_router) 
 app.include_router(auth_linkedin_router) 
 
-# logging.info(f"DATABASE_URL CURRENTLY: {settings.DATABASE_URL}")
-# logger.info("@main Routers: %s", app.routes)
 
-
-# if settings.ENV.upper()=="DEV":
-#    Base.metadata.create_all(bind=engine)
-
-@app.get("/ping")
+@app.get("/authping")
 def ping():
-   return {"message": "pong"}
+   return {"authping": "auth-pong"}
    
 if __name__ == "__main__":
    port = int(os.environ.get("PORT", 8000))

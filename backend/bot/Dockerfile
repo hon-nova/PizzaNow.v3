@@ -16,6 +16,9 @@ COPY core ./core
 
 COPY bot ./bot
 
+# Remove any accidentally copied .env files
+RUN find . -type f -name ".env*" -delete
+
 ENV PORT=2025
 
 CMD ["python", "-m", "bot.app.main"]

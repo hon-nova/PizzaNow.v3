@@ -13,8 +13,6 @@ dist
 Thumbs.db
 
 # env files
-.env
-.env.preview
 
 # git
 .git

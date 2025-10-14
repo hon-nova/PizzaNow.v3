@@ -58,7 +58,7 @@ class Settings(BaseSettings):
       extra = "ignore"   
 
 settings = Settings() # pyright: ignore[reportCallIssue]
-print("test os.getenv DATABASE_URL")
+print("@core/config: test os.getenv DATABASE_URL")
 print(os.getenv("DATABASE_URL")) 
 
 

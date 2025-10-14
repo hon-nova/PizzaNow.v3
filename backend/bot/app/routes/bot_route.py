@@ -8,9 +8,9 @@ from core.model import User
 from core.schema import LoginFilter
 import logging
 logger = logging.getLogger("uvicorn.error") 
-bot_router = APIRouter(prefix="/api/pizzas", tags=["pizza"])
+bot_router = APIRouter(prefix="/api/bot", tags=["pizza"])
 
-@bot_router.get("/")
+@bot_router.get("/pizzas")
 def get_pizzas(page: int = Query(1), limit: int = Query(8)):
    db = SessionLocal()
    try:

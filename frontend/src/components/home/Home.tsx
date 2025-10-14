@@ -29,7 +29,7 @@ export function Home(){
 
    useEffect(()=>{
       async function getUser(){
-         const res = await fetch(`${BASE_URL}/api/pizzas/auth`,{
+         const res = await fetch(`${BASE_URL}/api/bot/auth`,{
             method:"GET",
             headers:{
                   "Content-Type":"application/json",               

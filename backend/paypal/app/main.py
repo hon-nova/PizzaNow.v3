@@ -32,9 +32,9 @@ app.include_router(webhook_router)
 if settings.ENV.upper()=="DEV":
    Base.metadata.create_all(bind=engine)
 
-@app.get("/ping")
+@app.get("/paypalping")
 def ping():
-   return {"pong": True}
+   return {"paypalpong": "paypal-pong"}
    
 if __name__ == "__main__":
    port = int(os.environ.get("PORT", 8084))
