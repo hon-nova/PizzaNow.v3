@@ -6,11 +6,12 @@ from core.config import settings
 from auth.app.routes import auth_router,auth_google_router,auth_linkedin_router
 from core.model import User
 
+
+app = FastAPI() 
+
 import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-app = FastAPI() 
 
 origins = [origin.strip() for origin in settings.ALLOWED_ORIGINS.split(",")]
 
@@ -31,6 +32,7 @@ app.include_router(auth_linkedin_router)
 @app.get("/authping")
 def ping():
    return {"authping": "auth-pong"}
+
    
 if __name__ == "__main__":
    port = int(os.environ.get("PORT", 8000))

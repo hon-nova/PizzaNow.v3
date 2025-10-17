@@ -23,14 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 ) 
     
-# app.include_router(test_router, prefix="/test") 
 app.include_router(profile_router) 
-
-# logging.info(f"DATABASE_URL CURRENTLY: {settings.DATABASE_URL}")
-# logger.info("@main Routers: %s", app.routes)
-
-# if settings.ENV.upper()=="DEV":
-#    Base.metadata.create_all(bind=engine)
 
 @app.get("/profileping")
 def ping():

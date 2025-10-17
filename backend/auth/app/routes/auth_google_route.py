@@ -17,11 +17,11 @@ GOOGLE_TOKEN_ENDPOINT = settings.GOOGLE_TOKEN_ENDPOINT
 GOOGLE_REDIRECT_URI = settings.GOOGLE_REDIRECT_URI
 google_redirect_uri_fe = settings.GOOGLE_REDIRECT_URI_FE
 
-if settings.ENV.upper()=="DEV":  
-   google_redirect_uri_fe = google_redirect_uri_fe.split(",")[0]
-else:
-   # prod
-   google_redirect_uri_fe = settings.GOOGLE_REDIRECT_URI_FE
+# if settings.ENV.upper()=="DEV":  
+#    google_redirect_uri_fe = google_redirect_uri_fe.split(",")[0]
+# else:
+#    # prod
+#    google_redirect_uri_fe = settings.GOOGLE_REDIRECT_URI_FE
 
 @auth_google_router.get("/google/login")
 def google_login():
@@ -35,7 +35,7 @@ def google_login():
 
    scope = quote_plus(GOOGLE_SCOPE, safe=" ")
    url = "https://accounts.google.com/o/oauth2/auth?" + urlencode(params) + f"&scope={scope}"
-   # url = "https://accounts.google.com/o/oauth2/auth?" + urllib.parse.urlencode(params)
+  
    logger.info("Redirecting to Google OAuth URL: %s", url)
    return RedirectResponse(url=url)
 

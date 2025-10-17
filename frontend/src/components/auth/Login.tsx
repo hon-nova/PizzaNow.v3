@@ -14,8 +14,10 @@ export function Login() {
 
    const [msg, setMsg] = useState<Msg>({error: '',success:''})
    
-   const BASE_URL ="http://auth.pizzanow.local.com:4016"
-   console.log("AUTH URL:",BASE_URL);
+   const BASE_URL ="https://auth.pizzanowai.studio"
+    console.log("fixed AUTH URL:",BASE_URL);
+   console.log(`real .env: auth: ${import.meta.env.VITE_AUTH_BACKEND_URL}`)
+  
 
    const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault()

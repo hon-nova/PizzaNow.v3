@@ -27,4 +27,20 @@ def get_me(user: User = Depends(get_current_user)):
    # user_dict = base.model_dump()
    
    return base
+
+from core.config import settings
+# test only
+@bot_router.get("/secretValue")
+def get_config_value():   
+   try:
+      return {
+         "BOT":"yes",
+         "AWS_ACCESS_KEY_ID":settings.AWS_ACCESS_KEY_ID,
+         "AWS_S3_BUCKET":settings.AWS_S3_BUCKET,
+          "VERTEX_REGION":settings.VERTEX_REGION,
+         "DATABASE_URL": settings.DATABASE_URL,
+         
+      }
+   except Exception as e:
+      print(f"EXCEPTION: {e}")
    

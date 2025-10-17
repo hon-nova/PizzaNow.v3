@@ -15,22 +15,24 @@ spec:
       spec:
          containers:
          -  name: bot-docker-container
-            image: hondocker23/bot-service:2025-10-10-2300
+            image: hondocker23/bot-service:2025-10-17-1313
             ports:
             - containerPort: 2025
             env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
-              value: /etc/config/vertex.json
-            envFrom:
-            - configMapRef:
-                name: pizzanow-config
+              value: /etc/secret-pizzanow/vertex.json
             volumeMounts:
               - name: secret-volume
-                mountPath: /etc/config
+                mountPath: /etc/secret-pizzanow
                 readOnly: true
-
+              - name: config-volume
+                mountPath: /etc/config-pizzanow
+                readOnly: true
          volumes:
            - name: secret-volume
              secret:
-               secretName: pizzanow-secret      
+               secretName: pizzanow-secret    
+           - name: config-volume  
+             configMap:
+               name: pizzanow-config
                 

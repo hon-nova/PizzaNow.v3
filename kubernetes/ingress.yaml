@@ -2,56 +2,69 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: pizzanow-ingress
-spec:
+  namespace: pizzanow
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: / 
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod 
+spec:  
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - www.pizzanowai.studio
+    - auth.pizzanowai.studio
+    - bot.pizzanowai.studio
+    - profile.pizzanowai.studio
+    - paypal.pizzanowai.studio
+    secretName: pizzanow-tls
   rules:
-  - host: fe.pizzanow.local.com
+  - host: www.pizzanowai.studio
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: fe-service
+            name: fe-endpoint
             port:
               number: 80
-  - host: auth.pizzanow.local.com
+  - host: auth.pizzanowai.studio
     http:
       paths:
       - path: /api/auth
         pathType: Prefix
         backend:
           service:
-            name: auth-service
+            name: auth-endpoint
             port:
               number: 4016
-  - host: bot.pizzanow.local.com
+  - host: bot.pizzanowai.studio
     http:
       paths:
       - path: /api/bot
         pathType: Prefix
         backend:
           service:
-            name: bot-service
+            name: bot-endpoint
             port:
               number: 4017
-  - host: profile.pizzanow.local.com
+  - host: profile.pizzanowai.studio
     http:
       paths:
       - path: /api/profile
         pathType: Prefix
         backend:
           service:
-            name: profile-service
+            name: profile-endpoint
             port:
               number: 4018
-  - host: paypal.pizzanow.local.com
+  - host: paypal.pizzanowai.studio
     http:
       paths:
       - path: /api/paypal
         pathType: Prefix
         backend:
           service:
-            name: paypal-service
+            name: paypal-endpoint
             port:
-              number: 4019
+              number: 443

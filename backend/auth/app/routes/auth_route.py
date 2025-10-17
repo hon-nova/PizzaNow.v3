@@ -118,4 +118,17 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
       print(f"EXCEPTION /login: {str(e)}")
       raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
-   
+# test only
+@auth_router.get("/secretValue")
+def get_config_value():   
+   try:
+      return {
+         "AUTH":"yes",
+         "GOOGLE_REDIRECT_URI":settings.GOOGLE_REDIRECT_URI,
+         "L_REDIRECT_URI":settings.L_REDIRECT_URI,
+         "DATABASE_URL": settings.DATABASE_URL,
+         "PROJECT_ID": settings.PROJECT_ID,
+         "SECRET_KEY": settings.SECRET_KEY
+      }
+   except Exception as e:
+      print(f"EXCEPTION: {e}")

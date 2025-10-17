@@ -17,6 +17,7 @@ export function PayPal() {
    console.log(`paypal user: ${user?.username}`)
    const { cart, setUserId, clearCart } = useCartStore()
    const BASE_PAYPAL_URL = import.meta.env.VITE_PAYPAL_BACKEND_URL
+   console.log(`BASE_PAYPAL_URL: ${BASE_PAYPAL_URL}`)
    const cartItems = cart?.cartItems || []
 
    const [message, setMessage] = useState("")  

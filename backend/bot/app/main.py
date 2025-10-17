@@ -1,12 +1,12 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from core.config import settings
 from core.model import User
 from bot.app.routes import bot_router,graph_router
 # from core.session import SessionLocal
 from bot.app.services import respond_shipment_status
+
 
 import logging
 logging.basicConfig(level=logging.INFO)

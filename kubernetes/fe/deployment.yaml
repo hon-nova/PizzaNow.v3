@@ -15,7 +15,7 @@ spec:
       spec:
          containers:
          - name: fe-docker-container
-           image: hondocker23/fe-service:2025-10-11-1042
+           image: hondocker23/fe-service:2025-10-17-1440
            ports:
            - containerPort: 80
            

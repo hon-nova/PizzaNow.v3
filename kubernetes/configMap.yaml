@@ -1,9 +1,29 @@
 apiVersion: v1
 data:
-  .env.config: "ENV=DEV\nVERTEX_REGION=us-central1\nALLOWED_ORIGINS=http://pizzanow.local.com,https://pizzanow-v3.vercel.app/\nALGORITHM=HS256\nACCESS_TOKEN_EXPIRE_MINUTES=43200\nGOOGLE_SCOPE=\"email
-    profile openid\"\nGOOGLE_RESPONSE_TYPE=code\nGOOGLE_TOKEN_ENDPOINT=https://oauth2.googleapis.com/token\nGOOGLE_REDIRECT_URI=http://auth-endpoint:4016/api/auth/google/callback\nGOOGLE_REDIRECT_URI_FE=http://pizzanow.local.com/products,https://pizzanow-v3.vercel.app/products\nL_TOKEN_URL=https://www.linkedin.com/oauth/v2/accessToken\nL_USER_URL=https://api.linkedin.com/v2/userinfo\nL_SCOPE=\"openid
-    profile email\"\nL_RESPONSE_TYPE=code\nL_STATE=I58HgiHrZZwWphR8Lg0wlLdyOHt9xnEoAnaE0Fo4fc\nL_REDIRECT_URI=http://auth-endpoint:4016/api/auth/linkedin/callback
-    \nL_REDIRECT_URI_FE=http://pizzanow.local.com/products,https://pizzanow-v3.vercel.app/products\n\n\n"
+  .env.config: |+
+    ENV=PROD
+    VERTEX_REGION=us-central1
+    ALLOWED_ORIGINS=https://www.pizzanowai.studio
+    ALGORITHM=HS256
+    ACCESS_TOKEN_EXPIRE_MINUTES=43200
+    GOOGLE_SCOPE=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid
+    GOOGLE_RESPONSE_TYPE=code
+    GOOGLE_TOKEN_ENDPOINT=https://oauth2.googleapis.com/token
+    GOOGLE_REDIRECT_URI=https://auth.pizzanowai.studio/api/auth/google/callback
+    GOOGLE_REDIRECT_URI_FE=https://www.pizzanowai.studio/products
+    L_TOKEN_URL=https://www.linkedin.com/oauth/v2/accessToken
+    L_USER_URL=https://api.linkedin.com/v2/userinfo
+    L_SCOPE="openid profile email"
+    L_RESPONSE_TYPE=code
+    L_STATE=I58HgiHrZZwWphR8Lg0wlLdyOHt9xnEoAnaE0Fo4fc
+    L_REDIRECT_URI=https://auth.pizzanowai.studio/api/auth/linkedin/callback
+    L_REDIRECT_URI_FE=https://www.pizzanowai.studio/products
+    PAYPAL_DOMAINS_FE=https://www.pizzanowai.studio
+    PAYPAL_DOMAINS_BE=https://paypal.pizzanowai.studio
+    PAYPAL_OAUTH2_TOKEN_URL=https://api-m.sandbox.paypal.com/v1/oauth2/token
+    PAYPAL_CHECKOUT_ORDERS_URL=https://api-m.sandbox.paypal.com/v2/checkout/orders
+
+
 kind: ConfigMap
 metadata:
   creationTimestamp: null

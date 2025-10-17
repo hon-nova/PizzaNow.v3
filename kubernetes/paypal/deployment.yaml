@@ -15,19 +15,21 @@ spec:
       spec:
          containers:
          -  name: paypal-docker-container
-            image: hondocker23/paypal-service:2025-10-10-2237
+            image: hondocker23/paypal-service:2025-10-17-1319
             ports:
             - containerPort: 2025
-            envFrom:
-            - configMapRef:
-                name: pizzanow-config
             volumeMounts:
               - name: secret-volume
-                mountPath: /etc/config
+                mountPath: /etc/secret-pizzanow
                 readOnly: true
-
+              - name: config-volume
+                mountPath: /etc/config-pizzanow
+                readOnly: true
          volumes:
            - name: secret-volume
              secret:
                secretName: pizzanow-secret      
+           - name: config-volume
+             configMap:
+               name: pizzanow-config
                 

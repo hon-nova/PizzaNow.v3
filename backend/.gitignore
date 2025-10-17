@@ -1,6 +1,7 @@
 course01.json
-
-*.preview
+*.mac
 *.prod
+*.mac
 seed_pizza.py
 awsscripts/
+core/vertex.json

@@ -170,6 +170,24 @@ def get_me(user: User = Depends(get_current_user)):
    
    return base
 
+from core.config import settings
+# test only
+@paypal_router.get("/secretValue")
+def get_config_value():   
+   try:
+      return {
+         "PAYPAL":"yes",
+         "PAYPAL_CLIENT_ID":settings.PAYPAL_CLIENT_ID,
+         "PAYPAL_CLIENT_SECRET":settings.PAYPAL_CLIENT_SECRET,
+         "L_REDIRECT_URI_FE":settings.L_REDIRECT_URI_FE,
+         "L_REDIRECT_URI":settings.L_REDIRECT_URI,
+         "DATABASE_URL": settings.DATABASE_URL,
+         "PROJECT_ID": settings.PROJECT_ID,
+         "SECRET_KEY": settings.SECRET_KEY
+      }
+   except Exception as e:
+      print(f"EXCEPTION: {e}")
+
 """{
     "id": "7W328831TJ718173M",
     "status": "CREATED",

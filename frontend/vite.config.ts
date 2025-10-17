@@ -5,4 +5,18 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/',
+  preview: {
+    port: 80,
+    host: true,
+    // SPA fallback:
+    headers: {
+      "Cache-Control": "no-cache"
+    },
+   },
+   server: {
+      host: true,
+   },
+   build: {
+      outDir: "dist",
+   },
 })

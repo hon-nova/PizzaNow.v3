@@ -15,18 +15,21 @@ spec:
       spec:
          containers:
          -  name: profile-docker-container
-            image: hondocker23/profile-service:2025-10-10-2229
+            image: hondocker23/profile-service:2025-10-17-1318
             ports:
-            - containerPort: 2025
-            envFrom:
-            - configMapRef:
-                name: pizzanow-config
+            - containerPort: 2025           
             volumeMounts:
               - name: secret-volume
-                mountPath: /etc/config
+                mountPath: /etc/secret-pizzanow
+                readOnly: true
+              - name: config-volume
+                mountPath: /etc/config-pizzanow
                 readOnly: true
          volumes:
            - name: secret-volume
              secret:
                secretName: pizzanow-secret
+           - name: config-volume
+             configMap:
+               name: pizzanow-config
             

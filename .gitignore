@@ -1,4 +1,8 @@
 docs/
 ingredients/
-kubernetes/.env.*
+kubernetes/.env.config
+kubernetes/,env.secret
+kubernetes/vertex.json
+bucket-policy.json
+
 
