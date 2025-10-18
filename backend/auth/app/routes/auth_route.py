@@ -97,6 +97,7 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
       response.set_cookie(
          key="k8s_token",
          value=access_token,        
+         domain=".pizzanowai.studio",
          **cookie_params
       )
       response = JSONResponse(content=data)
