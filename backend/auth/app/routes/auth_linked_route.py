@@ -142,8 +142,7 @@ def linkedin_callback(request: Request, db: Session = Depends(get_db)):
       }
    response.set_cookie(
       key="k8s_token",
-      value=access_token,
-      domain=".pizzanowai.studio",
+      value=access_token,     
       **cookie_params
    )
    return response
