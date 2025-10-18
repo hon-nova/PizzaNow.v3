@@ -6,7 +6,6 @@ from core.config import settings
 from auth.app.routes import auth_router,auth_google_router,auth_linkedin_router
 from core.model import User
 
-
 app = FastAPI() 
 
 import logging

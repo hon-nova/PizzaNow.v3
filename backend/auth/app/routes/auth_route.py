@@ -81,8 +81,6 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
       }
       
       access_token = create_access_token(jwt_data)
-      # print(f"access_token:")
-      # print(access_token)
       
       data['token']=access_token
       data['message'] ="Login Success"
@@ -102,8 +100,7 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
          **cookie_params
       )
       response = JSONResponse(content=data)
-     
-      # print(f"@auth_route login data: {data}")
+      
       return response      
       
    except Exception as e:

@@ -89,35 +89,7 @@ def google_callback(request: Request,db: Session = Depends(get_db)):
       }
       access_token = create_access_token(data)  
       
-      response = RedirectResponse(url=google_redirect_uri_fe)
-   
-      # cookie_params = {
-      #       "httponly": True,
-      #       "max_age":settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-      #       "samesite":"none",
-      #       "secure": settings.ENV.upper()!="DEV",         
-      #    }
-      # if settings.ENV.upper() == "DEV":         
-      #    cookie_params = {
-      #    "httponly": True,
-      #    "samesite": "lax",
-      #    "secure": False,
-      #    "max_age": 60*60*24*30  
-      #   }
-      # else:         
-      #    cookie_params = {
-      #    "httponly": True,
-      #    "samesite": "none",
-      #    "secure": True,
-      #    "max_age": 60*60*24*30  
-      #   }      
-      
-      # response.set_cookie(
-      #    key="k8s_token",
-      #    value=access_token,
-      #    domain=".pizzanow.local.com",
-      #    **cookie_params
-      # )   
+      response = RedirectResponse(url=google_redirect_uri_fe)   
       cookie_params = {
          "httponly": True,
          "samesite": "none",
