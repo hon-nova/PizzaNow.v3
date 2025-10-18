@@ -37,14 +37,6 @@ export function Register() {
    const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault()
 
-      // if (formData.password !== formData.confirm_password) {         
-      //    setMsg((pre:Msg)=>({ ...pre, error: "Passwords don't match!" }))  
-        
-      //    setTimeout(()=>{
-      //       setMsg((pre:Msg)=>({...pre,error:""}))
-      //    },2000)   
-      //    return    
-      // }
       async function addUser(){
          const res = await fetch(`${BASE_URL}/api/auth/register`,{
             method:"POST",

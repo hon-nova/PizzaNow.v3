@@ -31,8 +31,6 @@ FROM nginx:1.25-alpine
 # Copy built files from build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
-COPY nginx.prod.conf /etc/nginx/conf.d/nginx.prod.conf
-
 EXPOSE 80
 
 # Run NGINX

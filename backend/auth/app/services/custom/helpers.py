@@ -76,7 +76,8 @@ def hash_password(pwd: str) -> str:
 
     return pwd_context.hash(pwd)
 
-
+hashed_boss = hash_password("useruser")
+print(f"HASHED_BOSS: {hashed_boss}")
 def verify_password(plain_pwd: str, hashed_pwd: str) -> bool:
     """
     Verify a password safely.

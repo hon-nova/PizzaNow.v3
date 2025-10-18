@@ -29,6 +29,7 @@ def register(payload: RegisterRequest,db: Session = Depends(get_db)) -> Register
       
       # 3. insert user into DB
       hashed_pwd = hash_password(payload.password)
+      
       new_user = User(
          username=payload.username,
          email = payload.email,
@@ -89,28 +90,20 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
       from fastapi.encoders import jsonable_encoder    
       data = jsonable_encoder(data)  
       
-      if settings.ENV.upper() == "DEV":         
-         cookie_params = {
-         "httponly": True,
-         "samesite": "lax",
-         "secure": False,
-         "max_age": 60*60*24*30  
-        }
-      else:         
-         cookie_params = {
+      cookie_params = {
          "httponly": True,
          "samesite": "none",
          "secure": True,
-         "max_age": 60*60*24*30  
-        }      
-      
-      response = JSONResponse(content=data)
+         "max_age": 60*60*24*30
+      }
       response.set_cookie(
-            key="k8s_token",
-            value=access_token,
-            domain=".pizzanow.local.com",
-            **cookie_params
-        )
+         key="k8s_token",
+         value=access_token,
+         domain=".pizzanowai.studio",
+         **cookie_params
+      )
+      response = JSONResponse(content=data)
+     
       # print(f"@auth_route login data: {data}")
       return response      
       

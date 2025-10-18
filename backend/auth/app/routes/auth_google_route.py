@@ -97,27 +97,39 @@ def google_callback(request: Request,db: Session = Depends(get_db)):
       #       "samesite":"none",
       #       "secure": settings.ENV.upper()!="DEV",         
       #    }
-      if settings.ENV.upper() == "DEV":         
-         cookie_params = {
-         "httponly": True,
-         "samesite": "lax",
-         "secure": False,
-         "max_age": 60*60*24*30  
-        }
-      else:         
-         cookie_params = {
+      # if settings.ENV.upper() == "DEV":         
+      #    cookie_params = {
+      #    "httponly": True,
+      #    "samesite": "lax",
+      #    "secure": False,
+      #    "max_age": 60*60*24*30  
+      #   }
+      # else:         
+      #    cookie_params = {
+      #    "httponly": True,
+      #    "samesite": "none",
+      #    "secure": True,
+      #    "max_age": 60*60*24*30  
+      #   }      
+      
+      # response.set_cookie(
+      #    key="k8s_token",
+      #    value=access_token,
+      #    domain=".pizzanow.local.com",
+      #    **cookie_params
+      # )   
+      cookie_params = {
          "httponly": True,
          "samesite": "none",
          "secure": True,
-         "max_age": 60*60*24*30  
-        }      
-      
+         "max_age": 60*60*24*30
+      }
       response.set_cookie(
          key="k8s_token",
          value=access_token,
-         domain=".pizzanow.local.com",
+         domain=".pizzanowai.studio",
          **cookie_params
-      )   
+      )
 
       return response
    except Exception as e:
