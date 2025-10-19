@@ -68,7 +68,6 @@ class Order(Base):
    transaction_date = Column(DateTime(timezone=True),default=lambda: datetime.now(timezone.utc))     
    shipment_status = Column(String, default=ShipmentStatus.pending.value)   
   
-   # relationship to order items
    items = relationship("OrderItem", back_populates="order")
    
 class OrderItem(Base):

@@ -1,9 +1,6 @@
 from sqlalchemy.orm import Session
 from core import Pizza, SessionLocal
 
-# def get_all_pizzas(db: Session) -> list[Pizza]:
-#    return db.query(Pizza).all()   
-
 def get_all_pizzas(db: Session = SessionLocal() ,page=1, limit=8):
    try:
       offset = (page - 1) * limit
@@ -34,8 +31,3 @@ def get_all_pizzas(db: Session = SessionLocal() ,page=1, limit=8):
    except Exception as e:
       db.rollback()
       raise e
-
-# db: Session = SessionLocal()
-# all_pizzas = get_all_pizzas(db)
-# for pizza in all_pizzas['pizzas']:
-#    print(pizza)

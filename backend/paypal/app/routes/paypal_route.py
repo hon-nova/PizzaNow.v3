@@ -49,7 +49,7 @@ from decimal import Decimal, ROUND_HALF_UP
 @paypal_router.post("/orders")
 def create_order(data: OrderRequest):
    token = get_access_token()
-   print("IMPORTANT: access_token: {token}")
+  
    try:
       Decimal(str(data.amount)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
    except Exception as e:
@@ -88,12 +88,10 @@ def create_order(data: OrderRequest):
 
 @paypal_router.post("/orders/{order_id}/capture")
 def capture_and_save(order_id:str,payload:dict = Body(...),db:Session=Depends(get_db)):     
-   token = get_access_token()
-   logging.info(f"order_id: {order_id}")
+   token = get_access_token()   
    
-   status = capture_status(order_id,token) 
-
-   # 3. Build OrderCreateRequest manually
+   status = capture_status(order_id,token)
+   
    order_data = {
       "user_id": payload["user_id"],
       "paypal_order_id": order_id,
@@ -102,16 +100,14 @@ def capture_and_save(order_id:str,payload:dict = Body(...),db:Session=Depends(ge
       "shipping_fee": payload.get("shipping_fee", 0),
       "taxes": payload.get("taxes", 0),
       "total": payload.get("total", 0),
-      "items": payload["cart_items"],  # MUST exist        
+      "items": payload["cart_items"],      
    }
    
    order_req = OrderCreateRequest(**order_data)  
    order_req.payment_status = status  
    save_to_neon(order_req,db)  
    
-   return status  
-      
-   # return  RedirectResponse(url=f"{PAYPAL_DOMAINS_BE}/api/paypal/success")   
+   return status   
 
 
 def capture_status(order_id:str,token:str):       
@@ -143,30 +139,20 @@ def payment_success(order_id: str = None,db: Session = Depends(get_db)):
    if not order_id:
       return {"error": "No PayPal order id provided"}
    
-   # Capture the payment
    saved_order = db.query(Order).filter(Order.paypal_order_id == order_id).first()
    status = capture_status(saved_order.paypal_order_id,token) 
    
-   # PAYPAL confirms the order's payment_status
    saved_order.payment_status = status
    db.commit()
    print(f"TEST captured_order_id: {saved_order.id}, status: {status}")
    
    return RedirectResponse(url=f"{PAYPAL_DOMAINS_FE}/products?success={status}")  
-            
-
-# @paypal_router.get("/cancel")
-# def paypal_cancel():
-#    """Handle failed/canceled payment from PayPal."""
-  
-#    return RedirectResponse(url=f"{PAYPAL_DOMAINS_FE}/user/cart?error=Transaction%20Cancelled%21")
 
 
 @paypal_router.get("/auth",response_model=LoginFilter)
 def get_me(user: User = Depends(get_current_user)):
    logging.info(f"paypal user in /auth route: {user.username}")
    base= LoginFilter.model_validate(user)
-   # user_dict = base.model_dump()
    
    return base
 
@@ -187,42 +173,3 @@ def get_config_value():
       }
    except Exception as e:
       print(f"EXCEPTION: {e}")
-
-"""{
-    "id": "7W328831TJ718173M",
-    "status": "CREATED",
-    "links": [
-        {
-            "href": "https://api.sandbox.paypal.com/v2/checkout/orders/7W328831TJ718173M",
-            "rel": "self",
-            "method": "GET"
-        },
-        {
-            "href": "https://www.sandbox.paypal.com/checkoutnow?token=7W328831TJ718173M",
-            "rel": "approve",
-            "method": "GET"
-        },
-        {
-            "href": "https://api.sandbox.paypal.com/v2/checkout/orders/7W328831TJ718173M",
-            "rel": "update",
-            "method": "PATCH"
-        },
-        {
-            "href": "https://api.sandbox.paypal.com/v2/checkout/orders/7W328831TJ718173M/capture",
-            "rel": "capture",
-            "method": "POST"
-        }
-    ]
-}"""
-
-"""
-logging.info(f"TEST ONLY @paypal_router")    
-
-saved = db.query(Order).filter(Order.paypal_order_id == order_id).first()  
-order_out = OrderOut.from_orm(saved)      
-
-logging.info(json.dumps(order_out.model_dump(), default=str,indent=2))
-# OR logging.info(order_out.model_dump_json(indent=2))
-   logging.info(f" DURING STATUS COMPLETED ...")      """     
-
-

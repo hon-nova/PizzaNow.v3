@@ -24,7 +24,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
    })
    
    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-   print(f"IMPORTANT encoded_jwt: {encoded_jwt}")
+   
    return encoded_jwt
 import re
 email_regex = r"^[\w\.-]+@[\w\.-]+\.\w+$"
@@ -76,8 +76,7 @@ def hash_password(pwd: str) -> str:
 
     return pwd_context.hash(pwd)
 
-hashed_boss = hash_password("useruser")
-print(f"HASHED_BOSS: {hashed_boss}")
+
 def verify_password(plain_pwd: str, hashed_pwd: str) -> bool:
     """
     Verify a password safely.
@@ -100,10 +99,3 @@ def verify_password(plain_pwd: str, hashed_pwd: str) -> bool:
     except Exception:
         return False
 
-
-# quick test
-if __name__ == "__main__":
-    hashed = hash_password("useruser")
-    print(f"mypassword: {hashed}")
-    print("verify correct:", verify_password("useruser", hashed))
-    print("verify wrong:", verify_password("wrongpass", hashed))

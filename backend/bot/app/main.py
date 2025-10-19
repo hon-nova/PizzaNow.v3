@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
 from core.model import User
 from bot.app.routes import bot_router,graph_router
-# from core.session import SessionLocal
 from bot.app.services import respond_shipment_status
 
 
@@ -24,14 +23,8 @@ app.add_middleware(
     allow_headers=["*"],
 ) 
     
-# app.include_router(test_router, prefix="/test") 
 app.include_router(bot_router) 
 app.include_router(graph_router) 
-
-# if settings.ENV.upper()=="DEV":
-#    Base.metadata.create_all(bind=engine)
-# print(f"RESPOND_SHIPMENT_STATUS")
-# print(respond_shipment_status("591c1973-8e02-4a29-a30c-905fe720ab58"))
 
 @app.get("/botping")
 def ping():

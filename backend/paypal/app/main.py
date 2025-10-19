@@ -6,7 +6,6 @@ from core.config import settings
 from core.session import Base, engine 
 from paypal.app.routes import paypal_router, webhook_router
 
-
 import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,12 +22,9 @@ app.add_middleware(
     allow_headers=["*"],
 ) 
     
-# app.include_router(test_router, prefix="/test") 
 app.include_router(paypal_router)   
 app.include_router(webhook_router)   
 
-# logging.info(f"DATABASE_URL CURRENTLY: {settings.DATABASE_URL}")
-# logger.info("@main Routers: %s", app.routes)
 
 if settings.ENV.upper()=="DEV":
    Base.metadata.create_all(bind=engine)

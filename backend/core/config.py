@@ -4,12 +4,12 @@ from pathlib import Path
 from dotenv import load_dotenv, dotenv_values
 
 def load_environment():
-   # /etc/secret-pizzanow/
+  
    SECRET_FILE = Path("/etc/secret-pizzanow/.env.secret")
    CONFIG_FILE = Path("/etc/config-pizzanow/.env.config")
    LOCAL_ENV_FILE = Path(__file__).parent / ".env"
 
-   # Order: secrets first → config → local override
+   
    for env_file in [SECRET_FILE, CONFIG_FILE, LOCAL_ENV_FILE]:
       if env_file.exists():
          load_dotenv(dotenv_path=env_file, override=True)

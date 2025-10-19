@@ -71,10 +71,8 @@ def google_callback(request: Request,db: Session = Depends(get_db)):
       id_token_str = token_data.get("id_token")
 
       g_user = save_google_user_to_db(id_token_str,db)
-      # logger.info("TEST ONLY: Google User at google/callback: %s", g_user)
-      g_access_token = token_data.get("access_token")  
       
-      logger.info(f"TEST TEST g_access_token: {g_access_token}")
+      g_access_token = token_data.get("access_token")  
       
       user_obj = RegisterFilter.model_validate(g_user)
       user_dict = user_obj.model_dump()

@@ -12,19 +12,6 @@ class OrderItemSchema(BaseModel):
    quantity: int
    sub_amount: float
 
-"""
-   order_data = {
-        "user_id": payload["user_id"],
-        "paypal_order_id": order_id,
-        "payment_status":payload.get("payment_status",""),
-        "discount": payload.get("discount", 0),
-        "shipping_fee": payload.get("shipping_fee", 0),
-        "taxes": payload.get("taxes", 0),
-        "total": payload.get("total", 0),
-        "items": payload["cart_items"],  # MUST exist
-        "transaction_date": datetime.utcnow(),
-    }
-"""
 class OrderCreateRequest(BaseModel):
    user_id: str   
    paypal_order_id: str

@@ -22,7 +22,6 @@ shipment_status_tool = Tool(
    description="Check the shipment status of a given order_id. If status is pending or failed, notify an admin."
 )
 
-
 load_blueprint_tool = Tool(
     name="load_blueprint",
     func=load_blueprint,
@@ -79,9 +78,9 @@ def build_graph():
       messages = state.get("messages", [])
       if not messages or not any(isinstance(m, HumanMessage) for m in messages):
          placeholder = HumanMessage(content="(no user input)")
-         messages = [placeholder]  # start with dummy if empty
+         messages = [placeholder] 
       else:
-         messages = messages  # keep all history
+         messages = messages  
 
       llm_response = llm_with_tools.invoke([sys_identity, sys_msg] + messages)
       
@@ -95,16 +94,13 @@ def build_graph():
          for call in llm_response.tool_calls:
             tool_name = call["name"]
             tool_args = call.get("args", {})
-
-            # Map LLM arg names to your tool function
-            # If your tool expects input=..., convert from __arg1
+            
             if "__arg1" in tool_args:
                   tool_args["input"] = tool_args.pop("__arg1")
 
             tool = next((t for t in getattr(llm_with_tools, "_tools", []) if t.name == tool_name), None)
 
-            if tool:
-               # LangChain usually sends the first argument as value of __arg1 or similar
+            if tool:              
                input_value = list(tool_args.values())[0] if tool_args else ""
                result = tool.func(input_value)
                state["messages"].append(AIMessage(content=result))

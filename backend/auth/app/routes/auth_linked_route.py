@@ -15,7 +15,7 @@ auth_linkedin_router = APIRouter(prefix="/api/auth", tags=["linkedin_auth"])
 
 logger = logging.getLogger("uvicorn.error") 
 L_AUTHORIZATION_URL ="https://www.linkedin.com/oauth/v2/authorization"
-# L_AUTHORIZATION_URL =settings.L_AUTHORIZATION_URL
+
 L_TOKEN_URL=settings.L_TOKEN_URL
 L_USER_URL=settings.L_USER_URL
 L_CLIENT_ID=settings.L_CLIENT_ID
@@ -52,8 +52,7 @@ def linkedin_callback(request: Request, db: Session = Depends(get_db)):
    code = request.query_params.get("code")
    state = request.query_params.get("state")
    
-   if not state or state != L_STATE:
-      logger.error("State mismatch or state not provided.")
+   if not state or state != L_STATE:     
       return {"error": "State mismatch or state not provided."}   
 
    if not code:
@@ -100,8 +99,7 @@ def linkedin_callback(request: Request, db: Session = Depends(get_db)):
    logging.warning('LinkedIn raw user: %s',user)
    l_user = save_linkedin_user_to_db(user,db)
    logging.warning('LinkedIn user SAVED: %s',l_user)      
-   
-   # user_dict = UserResponse.model_validate(user_db).model_dump()   
+     
    user_obj = RegisterFilter.model_validate(l_user)
    user_dict = user_obj.model_dump()
    from fastapi.encoders import jsonable_encoder      

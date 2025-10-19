@@ -6,10 +6,8 @@ from core.model import  User
 from core.session import get_db
 from core.config import settings
 
-
 from auth.app.schemas import RegisterRequest, RegisterResponse, RegisterFilter,LoginRequest, LoginResponse, LoginFilter
 from auth.app.services.custom import hash_password, verify_password, create_user, create_access_token
-
 
 auth_router = APIRouter(prefix="/api/auth", tags=["auth"])
 import logging
@@ -17,17 +15,15 @@ logger = logging.getLogger("uvicorn.error")
 
 @auth_router.post("/register")
 def register(payload: RegisterRequest,db: Session = Depends(get_db)) -> RegisterResponse |dict:
-   try:
-      # 1 check if user exists
+   try:      
       user_db = db.query(User).filter(User.email == payload.email).first()
       if user_db:
          return {
             "detail":"Username or email already exists. Log in instead."
          }       
-      # 2. validate user inputs     
-      create_user(**payload.model_dump()) # make it a dict
+            
+      create_user(**payload.model_dump())       
       
-      # 3. insert user into DB
       hashed_pwd = hash_password(payload.password)
       
       new_user = User(
@@ -40,25 +36,21 @@ def register(payload: RegisterRequest,db: Session = Depends(get_db)) -> Register
       db.refresh(new_user)
             
       base = RegisterFilter.model_validate(new_user)
-      data = base.model_dump() #a dict
+      data = base.model_dump()
       data['message'] = "Registered successfully!"
-      response = RegisterResponse(**data)     
-      
-      print(f"@auth_route register response: {response}")
+      response = RegisterResponse(**data)         
 
       return response        
       
    except HTTPException:       
       raise
-   except Exception as e:
-        # Only log unexpected errors
-      print(f"EXCEPTION /register: {str(e)}")
+   except Exception as e:       
+      
       raise HTTPException(status_code=500, detail=f"Exception: {str(e)}, Internal server error")
    
 @auth_router.post("/login")
 def login(payload: LoginRequest, db: Session = Depends(get_db)):
-   try:
-      # 1 check if user exists
+   try:     
       user_db = db.query(User).filter(User.email == payload.email).first()
       logging.error(f"user_db: {user_db}")
       if not user_db:
@@ -81,8 +73,6 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
       }
       
       access_token = create_access_token(jwt_data)
-      
-      print(f'ACCESS_TOKEN: {access_token}')
       
       data['token']=access_token
       data['message'] ="Login Success"
@@ -111,12 +101,11 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
 from core.auth import get_current_user
 @auth_router.get("/me",response_model=LoginFilter)
 def get_me(user: User = Depends(get_current_user)):
-   logging.info(f"bot user in /auth route: {user.username}")
-   base= LoginFilter.model_validate(user)
-   # user_dict = base.model_dump()
    
+   base= LoginFilter.model_validate(user)    
    return base
-# test only
+
+# test
 @auth_router.get("/secretValue")
 def get_config_value():   
    try:

@@ -13,8 +13,7 @@ bot_router = APIRouter(prefix="/api/bot", tags=["pizza"])
 @bot_router.get("/pizzas")
 def get_pizzas(page: int = Query(1), limit: int = Query(8)):
    db = SessionLocal()
-   try:
-      # logging.info(get_all_pizzas(db, page, limit))
+   try:     
       return get_all_pizzas(db, page, limit)
    finally:
       db.close() 
@@ -23,8 +22,7 @@ def get_pizzas(page: int = Query(1), limit: int = Query(8)):
 @bot_router.get("/auth",response_model=LoginFilter)
 def get_me(user: User = Depends(get_current_user)):
    logging.info(f"bot user in /auth route: {user.username}")
-   base= LoginFilter.model_validate(user)
-   # user_dict = base.model_dump()
+   base= LoginFilter.model_validate(user) 
    
    return base
 

@@ -21,7 +21,7 @@ def _quantize_money(value) -> Decimal:
     return Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
 def save_to_neon(order: OrderCreateRequest, db: Session) -> Order:
-    # idempotency: avoid duplicate DB rows if capture retried
+    
    if order.paypal_order_id:
       existing = db.query(Order).filter(Order.paypal_order_id == order.paypal_order_id).first()
       if existing:
@@ -38,9 +38,8 @@ def save_to_neon(order: OrderCreateRequest, db: Session) -> Order:
       )
 
       db.add(new_order)
-      db.flush() 
-     
-      # create line items
+      db.flush()      
+      
       for item in order.items:
          oi = OrderItem(
             order_id=new_order.id,
@@ -58,20 +57,3 @@ def save_to_neon(order: OrderCreateRequest, db: Session) -> Order:
    except SQLAlchemyError:     
       db.rollback()
       raise
-# from core.session import SessionLocal
-# db: Session = SessionLocal()
-
-# saved = db.query(Order).filter(Order.paypal_order_id == order_id).first()     
-
-   # order_data = OrderOut.from_orm(saved)
-   # logging.info(order_data.json(indent=2))
-"""new_order = Order(
-      user_id=order.get("user_id"),
-      paypal_order_id=order.get("paypal_order_id"),
-      cart_items=order.get("cart_items"),
-      discount=order.get("discount", 0),
-      shipping_fee=order.get("shipping_fee", 0),
-      taxes=order.get("taxes", 0),
-      total=order.get("total"),
-      shipment_status="pending"
-)"""

@@ -10,10 +10,6 @@ engine= create_engine(
       echo=True
    )
 
-# inspector = inspect(engine)
-# print(f"@core/session")
-# print(inspector.get_table_names())
-
 SessionLocal = sessionmaker(autocommit=False,autoflush=False, bind=engine)
 
 def get_db():

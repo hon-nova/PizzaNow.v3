@@ -15,7 +15,7 @@ spec:
       spec:
          containers:
          -  name: auth-docker-container
-            image: hondocker23/auth-service:2025-10-17-1940
+            image: hondocker23/auth-service:2025-10-18-1939
             ports:
             - containerPort: 2025                      
             volumeMounts:

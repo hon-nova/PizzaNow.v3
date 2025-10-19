@@ -6,7 +6,6 @@ from core.config import settings
 from core.session import Base, engine 
 from profile_user.app.routes import profile_router
 
-
 import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
