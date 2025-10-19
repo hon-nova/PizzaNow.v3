@@ -12,24 +12,17 @@ export function Home(){
    const { user, setUser  } = useUserStore()
    const { clearCart } = useCartStore()
    console.log(`clearCart: ${clearCart}`)
-
    console.log(`logged-in user: `, user )
    const [searchParams] = useSearchParams()
    const [showModel, setShowModel ] = useState(true)
-       
-   // const success = searchParams.get("success");  
+        
    const success = searchParams.get("success");
-   const BASE_URL = import.meta.env.VITE_BOT_BACKEND_URL
-
+   const BASE_URL = import.meta.env.VITE_AUTH_BACKEND_URL
    
    console.log(`success: ${success}`) 
-   // if (success) {
-   //    clearCart()
-   // }
-
    useEffect(()=>{
       async function getUser(){
-         const res = await fetch(`${BASE_URL}/api/bot/auth`,{
+         const res = await fetch(`${BASE_URL}/api/auth/me`,{
             method:"GET",
             headers:{
                   "Content-Type":"application/json",               

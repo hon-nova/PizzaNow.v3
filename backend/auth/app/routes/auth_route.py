@@ -82,28 +82,24 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
       
       access_token = create_access_token(jwt_data)
       
+      print(f'ACCESS_TOKEN: {access_token}')
+      
       data['token']=access_token
       data['message'] ="Login Success"
       
       from fastapi.encoders import jsonable_encoder    
       data = jsonable_encoder(data)  
       
-      cookie_params = {
-         "httponly": True,
-         "samesite": "none",
-         "secure": True,
-         "max_age": 60*60*24*30
-      }
+      response = JSONResponse(content=data)
       response.set_cookie(
          key="k8s_token",
          value=access_token,
-         domain=".pizzanowai.studio",  # note the leading dot
+         domain=".pizzanowai.studio", 
          httponly=True,
          secure=True,
          samesite="none",
          max_age=60*60*24*30
-      )
-      response = JSONResponse(content=data)
+      )     
       
       return response      
       
@@ -111,6 +107,15 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
       print(f"EXCEPTION /login: {str(e)}")
       raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
+
+from core.auth import get_current_user
+@auth_router.get("/me",response_model=LoginFilter)
+def get_me(user: User = Depends(get_current_user)):
+   logging.info(f"bot user in /auth route: {user.username}")
+   base= LoginFilter.model_validate(user)
+   # user_dict = base.model_dump()
+   
+   return base
 # test only
 @auth_router.get("/secretValue")
 def get_config_value():   

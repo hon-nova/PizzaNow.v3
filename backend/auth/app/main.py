@@ -21,8 +21,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 ) 
-    
-# app.include_router(test_router, prefix="/test") 
+
 app.include_router(auth_router) 
 app.include_router(auth_google_router) 
 app.include_router(auth_linkedin_router) 

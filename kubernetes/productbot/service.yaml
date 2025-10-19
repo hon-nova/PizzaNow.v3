@@ -7,6 +7,6 @@ spec:
    selector:
       app: bot-service
    ports:
-   - port: 4017
+   - port: 80
      targetPort: 2025     
    type: ClusterIP

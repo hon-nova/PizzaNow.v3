@@ -26,7 +26,7 @@ spec:
           service:
             name: auth-endpoint
             port:
-              number: 4016
+              number: 80
   - host: bot.pizzanowai.studio
     http:
       paths:
@@ -36,7 +36,7 @@ spec:
           service:
             name: bot-endpoint
             port:
-              number: 4017
+              number: 80
   - host: profile.pizzanowai.studio
     http:
       paths:
@@ -46,7 +46,7 @@ spec:
           service:
             name: profile-endpoint
             port:
-              number: 4018
+              number: 80
   - host: paypal.pizzanowai.studio
     http:
       paths:
@@ -56,4 +56,4 @@ spec:
           service:
             name: paypal-endpoint
             port:
-              number: 443
+              number: 80

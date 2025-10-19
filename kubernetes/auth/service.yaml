@@ -7,6 +7,6 @@ spec:
    selector:
       app: auth-service
    ports:
-   - port: 4016
+   - port: 80
      targetPort: 2025     
    type: ClusterIP
