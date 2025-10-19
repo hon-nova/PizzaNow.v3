@@ -1,17 +1,17 @@
 # PizzaNow – Full-Stack Microservices Application
 
 ## 0. Introduction
-PizzaNow is a full-stack, cloud-native pizza ordering platform demonstrating **microservices architecture**, **containerization**, and **Kubernetes orchestration**. The backend is modular, with **4 separate services**, allowing independent scaling, deployment, and maintenance. This project represents a major milestone in my IT journey, highlighting modern DevOps practices and cloud deployment patterns.  
+PizzaNow is a full-stack, cloud-native pizza ordering platform demonstrating **microservices architecture**, **containerization**, and **Kubernetes orchestration**. The backend is modular, with **four separate services**, allowing independent scaling, deployment, and maintenance. This project represents a major milestone in my IT journey, highlighting modern DevOps practices and cloud deployment patterns  
 
 ---
 
 ## 1. Key Features
 
-- **Microservices architecture**: Each backend service runs independently, communicating over a private network.  
-- **Containerized backend**: All services run in Docker containers, ensuring environment parity and easy deployment.  
-- **Kubernetes practice**: The backend can be deployed to a **K8s cluster** for auto-scaling, self-healing, and production-grade orchestration.  
-- **RESTful API for frontend consumption**: FE hosted on Vercel interacts with the backend via API endpoints.  
-- **Persistence & caching**: Postgres for structured data, Redis for caching and task queues.  
+- **Microservices architecture**: Each backend service runs independently, communicating over a private network  
+- **Containerized backend**: All services run in Docker containers, ensuring environment parity and easy deployment  
+- **Kubernetes practice**: The backend can be deployed to a **K8s cluster** for auto-scaling, self-healing, and production-grade orchestration  
+- **RESTful API for frontend consumption**: FE hosted on Vercel interacts with the backend via API endpoints  
+- **Persistence Storage**: Postgres on Neon for structured data  
 - **Real-time order management**: Orders are captured, processed, and updated across microservices.  
 
 ---
@@ -25,7 +25,7 @@ PizzaNow is a full-stack, cloud-native pizza ordering platform demonstrating **m
 | Database       | PostgreSQL                                |
 | AI             | Google Vertex AI (Gemini 2.5 Flash)       |
 | Containerization | Docker                                  |
-| Orchestration  | Kubernetes                                |
+| Orchestration  | Kubernetes, K9s                           |
 | Deployment     | Vercel (FE), DO Docker/Droplets (BE)      |
 
 ---
@@ -33,16 +33,17 @@ PizzaNow is a full-stack, cloud-native pizza ordering platform demonstrating **m
 ## 3. Architecture Overview
 
 - **4 Backend Services**:  
-  1. `auth-service` – Manages user authentication, including custom login as well as Google and LinkedIn sign-ins  
+  1. `auth-service` – Manages user authentication, including custom login, Google and LinkedIn sign-ins  
   2. `profile-service` – Handles user profile data, including purchase history and account settings  
-  3. `bot-service` – Powers **BenBot**, a chatbot that greets users and answers questions about the PizzaNow store  
+  3. `bot-service` – Powers **BenBot**, a chatbot that greets users and answers questions about the PizzaNow store and about tracking order status
   4. `paypal-service` – Executes background tasks such as PayPal payment processing, order capture, and notifications
 
 
 - **Kubernetes practice (YAML)**:  
   - Each service defined as a `Deployment` with a `Service`  
-  - Supports **horizontal pod scaling**, rolling updates, and auto-recovery  
+  - Supports **Horizontal Pod Autoscaling (HPA)**, **Persistent Volumes Claim (PVC)**, rolling updates, and auto-recovery  
   - Secrets and configuration managed via `ConfigMap` and `Secret`  
+  - **Ingress Controller** for routing traffic
 
 ---
 
