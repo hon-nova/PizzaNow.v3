@@ -15,7 +15,7 @@ spec:
       spec:
          containers:
          -  name: bot-docker-container
-            image: hondocker23/bot-service:2025-10-17-1313
+            image: hondocker23/bot-service:2025-10-19-2246
             ports:
             - containerPort: 2025
             env:

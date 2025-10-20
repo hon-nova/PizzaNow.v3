@@ -51,51 +51,19 @@ def validate_new_user(func):
 @validate_new_user
 def create_user(username,email, password, confirm_password):
    print(f"new user created with \nUsername: {username}\nEmail: {email}\nPassword length: {len(password)}")
-   
-   
+
+
 from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def hash_password(pwd: str) -> str:
-    """
-    Hash a password safely with bcrypt.
-    - Ensures it's a string
-    - Strips whitespace
-    - Truncates to 72 bytes (bcrypt limit)
-    """
-    if not isinstance(pwd, str):
-        raise ValueError(f"Password must be a string, got {type(pwd)}")
+   if not isinstance(pwd, str):
+      raise ValueError(f"Password must be a string, got {type(pwd)}")
 
-    # normalize & truncate
-    pwd = pwd.strip()
-    pwd_bytes = pwd.encode("utf-8")
-    if len(pwd_bytes) > 72:
-        pwd_bytes = pwd_bytes[:72]
-        pwd = pwd_bytes.decode("utf-8", errors="ignore")
-
-    return pwd_context.hash(pwd)
-
+   return pwd_context.hash(pwd.strip())
+ 
 
 def verify_password(plain_pwd: str, hashed_pwd: str) -> bool:
-    """
-    Verify a password safely.
-    - Returns False if inputs are invalid
-    - Handles bcrypt's 72-byte limit
-    """
-    if not plain_pwd or not hashed_pwd:
-        return False
-    if not isinstance(plain_pwd, str) or not isinstance(hashed_pwd, str):
-        return False
-
-    plain_pwd = plain_pwd.strip()
-    plain_bytes = plain_pwd.encode("utf-8")
-    if len(plain_bytes) > 72:
-        plain_bytes = plain_bytes[:72]
-        plain_pwd = plain_bytes.decode("utf-8", errors="ignore")
-
-    try:
-        return pwd_context.verify(plain_pwd, hashed_pwd)
-    except Exception:
-        return False
+   return pwd_context.verify(plain_pwd.strip(), hashed_pwd)
 
