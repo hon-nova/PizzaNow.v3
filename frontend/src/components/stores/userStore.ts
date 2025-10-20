@@ -17,7 +17,7 @@ export const useUserStore = create<UserState>()(
          
          logout: async () => {
             try {
-               await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`, {
+               await fetch(`${import.meta.env.VITE_AUTH_BACKEND_URL}/api/auth/logout`, {
                   method: "POST",
                   credentials: "include", 
                });

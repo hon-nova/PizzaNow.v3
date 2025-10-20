@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Depends, HTTPException
+from fastapi import APIRouter,Depends, HTTPException, Response
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
@@ -104,6 +104,17 @@ def get_me(user: User = Depends(get_current_user)):
    
    base= LoginFilter.model_validate(user)    
    return base
+
+@auth_router.post("/logout")
+def logout(response: Response):    
+   response.delete_cookie(
+      key="k8s_token",
+      domain=".pizzanowai.studio",  
+      httponly=True,
+      secure=True,
+      samesite="none"
+   )
+   return {"message": "Logged out successfully"}
 
 # test
 @auth_router.get("/secretValue")
