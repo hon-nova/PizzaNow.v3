@@ -49,7 +49,7 @@ PizzaNow is a full-stack, cloud-native pizza ordering platform demonstrating **m
 
 ## 4. Demo
 
-- [PizzaNow Demo Video](https://youtu.be/__unavail__)
+- [PizzaNow auth-service Demo Video](frontend/src/assets/auth-service-small.mp4)
 
 ---
 
