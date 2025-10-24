@@ -2,6 +2,8 @@ docs/
 ingredients/
 kubernetes/.env.config
 kubernetes/,env.secret
+kubernetes/secret.yaml
+kubernetes/configMap.yaml
 kubernetes/vertex.json
 bucket-policy.json
 
