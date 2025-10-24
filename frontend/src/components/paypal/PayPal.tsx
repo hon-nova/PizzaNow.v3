@@ -22,12 +22,20 @@ export function PayPal() {
 
    const [message, setMessage] = useState("")  
 
+   // const initialOptions = {
+   //       clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
+   //       enableFunding: "venmo",
+   //       buyerCountry: "CA",
+   //       currency: "CAD",
+   //       components: "buttons",
+   //    }
+
    const initialOptions = {
-         clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
-         enableFunding: "venmo",
-         buyerCountry: "CA",
-         currency: "CAD",
-         components: "buttons",
+      "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
+      currency: "CAD",
+      components: "buttons",
+      enableFunding: "venmo",
+      buyerCountry: "CA",
       }
    useEffect(()=>{
       async function getUser(){
@@ -109,7 +117,8 @@ export function PayPal() {
       <div className="col-span-5 flex flex-col">
         <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col">
           <h2 className="text-xl font-bold mb-4">Checkout with PayPal</h2>
-
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+             {/* @ts-ignore */}
           <PayPalScriptProvider options={initialOptions}>
             <PayPalButtons
               style={{ shape: "rect", layout: "vertical", color: "gold", label: "paypal" }}
